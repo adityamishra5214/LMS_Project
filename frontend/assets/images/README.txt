@@ -1,0 +1,1 @@
+Place the supplied university banner image here. The running application currently uses a styled text banner placeholder in index.jsp.
