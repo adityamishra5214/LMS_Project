@@ -11,7 +11,8 @@ import java.util.Optional;
  * ============================================================================
  * OOP CONCEPT: SINGLE RESPONSIBILITY & BUSINESS INTEGRITY
  * ============================================================================
- * FineService manages fine ledgering, simulated payments, and administrative waivers.
+ * FineService manages fine ledgering (Late returns at ₹5/day, Damaged books at ₹200,
+ * Lost books at ₹500), simulated gateway payments, and administrative waivers.
  */
 public class FineService {
 
@@ -28,10 +29,28 @@ public class FineService {
     /**
      * Records a new fine entry.
      */
-    public Fine createFine(String userId, int bookId, int amount, String reason) {
-        Fine fine = new Fine(0, userId, bookId, amount, reason);
+    public Fine createFine(String userId, int bookId, int amount, String fineType, String reason) {
+        Fine fine = new Fine(0, userId, bookId, amount, fineType, reason);
         fineDAO.save(fine);
         return fine;
+    }
+
+    public Fine createFine(String userId, int bookId, int amount, String reason) {
+        return createFine(userId, bookId, amount, "LATE_RETURN", reason);
+    }
+
+    /**
+     * Assesses a damaged book fine (Standard ₹200).
+     */
+    public Fine assessDamagedBookFine(String userId, int bookId, String description) {
+        return createFine(userId, bookId, Fine.FINE_DAMAGED_BOOK, "DAMAGED_BOOK", "Damaged Book: " + description);
+    }
+
+    /**
+     * Assesses a lost book fine (Standard ₹500 replacement fee).
+     */
+    public Fine assessLostBookFine(String userId, int bookId, String description) {
+        return createFine(userId, bookId, Fine.FINE_LOST_BOOK, "LOST_BOOK", "Lost Book Replacement: " + description);
     }
 
     /**
@@ -58,17 +77,21 @@ public class FineService {
     }
 
     /**
-     * Simulates fine clearance / payment.
+     * Simulates fine clearance / payment with gateway metadata.
      */
-    public boolean payFine(int fineId) {
+    public boolean payFine(int fineId, String paymentMethod, String transactionId) {
         Optional<Fine> fineOpt = fineDAO.findById(fineId);
         if (fineOpt.isEmpty()) {
             return false;
         }
 
         Fine fine = fineOpt.get();
-        fine.markAsPaid();
+        fine.markAsPaid(paymentMethod, transactionId);
         return fineDAO.update(fine);
+    }
+
+    public boolean payFine(int fineId) {
+        return payFine(fineId, "UPI (Instant)", "TXN-" + System.currentTimeMillis());
     }
 
     /**
@@ -86,7 +109,7 @@ public class FineService {
 
         Fine fine = fineOpt.get();
         fine.setReason("[WAIVED by " + operator.getName() + "] " + fine.getReason());
-        fine.markAsPaid();
+        fine.markAsPaid("Administrative Waiver", "WAIVE-" + System.currentTimeMillis());
         return fineDAO.update(fine);
     }
 
@@ -97,4 +120,3 @@ public class FineService {
         return fineDAO.findAll();
     }
 }
-

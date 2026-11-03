@@ -3,6 +3,7 @@ package com.bbau.library.servlet;
 import com.bbau.library.model.*;
 import com.bbau.library.service.BookService;
 import com.bbau.library.service.FineService;
+import com.bbau.library.service.LibraryStore;
 import com.bbau.library.service.LoanService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -11,7 +12,8 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 
 /**
- * Controller servlet handling state-mutating actions (borrowing, returns, payments, admin CRUD).
+ * Controller servlet handling state-mutating actions (borrowing, returns, payments, admin CRUD,
+ * wishlist items, reviews, and community discussions).
  */
 @WebServlet(name = "LibraryActionServlet", urlPatterns = {"/action"})
 public class LibraryActionServlet extends HttpServlet {
@@ -19,6 +21,7 @@ public class LibraryActionServlet extends HttpServlet {
     private final BookService bookService = new BookService();
     private final LoanService loanService = new LoanService();
     private final FineService fineService = new FineService();
+    private final LibraryStore store = LibraryStore.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -73,8 +76,11 @@ public class LibraryActionServlet extends HttpServlet {
 
             } else if ("payFine".equalsIgnoreCase(action)) {
                 int fineId = Integer.parseInt(request.getParameter("fineId"));
-                fineService.payFine(fineId);
-                session.setAttribute("flashMessage", "Fine payment recorded successfully. Receipt simulated.");
+                String payMethod = request.getParameter("payMethod");
+                if (payMethod == null || payMethod.isBlank()) payMethod = "UPI Gateway";
+                String txnId = "TXN-BBAU-" + System.currentTimeMillis();
+                fineService.payFine(fineId, payMethod, txnId);
+                session.setAttribute("flashMessage", "Fine payment of ₹" + request.getParameter("amount") + " recorded successfully via " + payMethod + ". Ref: " + txnId);
                 session.setAttribute("flashType", "success");
                 redirectTab = "fines";
 
@@ -85,16 +91,64 @@ public class LibraryActionServlet extends HttpServlet {
                 session.setAttribute("flashType", "success");
                 redirectTab = "admin";
 
+            } else if ("addWishlist".equalsIgnoreCase(action)) {
+                int bookId = Integer.parseInt(request.getParameter("bookId"));
+                store.getWishlist().add(currentUser.getId() + ":" + bookId);
+                session.setAttribute("flashMessage", "Book added to your wishlist!");
+                session.setAttribute("flashType", "success");
+                redirectTab = "wishlist";
+
+            } else if ("removeWishlist".equalsIgnoreCase(action)) {
+                int bookId = Integer.parseInt(request.getParameter("bookId"));
+                store.getWishlist().remove(currentUser.getId() + ":" + bookId);
+                session.setAttribute("flashMessage", "Book removed from your wishlist.");
+                session.setAttribute("flashType", "info");
+                redirectTab = "wishlist";
+
+            } else if ("addReview".equalsIgnoreCase(action)) {
+                int bookId = Integer.parseInt(request.getParameter("bookId"));
+                int rating = Integer.parseInt(request.getParameter("rating"));
+                String headline = request.getParameter("headline");
+                String body = request.getParameter("body");
+
+                Book b = store.getBooks().get(bookId);
+                String title = b != null ? b.getTitle() : "Book #" + bookId;
+
+                Review rev = new Review(store.nextReviewId(), currentUser.getId(), bookId, rating, headline, body);
+                rev.setUserName(currentUser.getName());
+                rev.setBookTitle(title);
+                store.getReviews().put(rev.getId(), rev);
+
+                session.setAttribute("flashMessage", "Thank you for reviewing '" + title + "'!");
+                session.setAttribute("flashType", "success");
+                redirectTab = "discussions";
+
+            } else if ("addDiscussion".equalsIgnoreCase(action)) {
+                int bookId = Integer.parseInt(request.getParameter("bookId"));
+                String topic = request.getParameter("topic");
+                String question = request.getParameter("question");
+
+                Book b = store.getBooks().get(bookId);
+                String title = b != null ? b.getTitle() : "Book #" + bookId;
+
+                Discussion disc = new Discussion(store.nextDiscussionId(), bookId, title, currentUser.getId(), currentUser.getName(), currentUser.getRole(), topic, question);
+                store.getDiscussions().put(disc.getId(), disc);
+
+                session.setAttribute("flashMessage", "Discussion question posted to library thread.");
+                session.setAttribute("flashType", "success");
+                redirectTab = "discussions";
+
             } else if ("addBook".equalsIgnoreCase(action)) {
                 String title = request.getParameter("title");
                 String author = request.getParameter("author");
+                String authorInfo = request.getParameter("authorInfo");
                 String subject = request.getParameter("subject");
                 String isbn = request.getParameter("isbn");
                 int copies = Integer.parseInt(request.getParameter("copies"));
                 boolean facultyOnly = Boolean.parseBoolean(request.getParameter("facultyOnly"));
                 String description = request.getParameter("description");
 
-                Book newBook = new Book(0, title, author, subject, isbn, copies, copies, facultyOnly, description);
+                Book newBook = new Book(0, title, author, authorInfo, subject, isbn, copies, copies, facultyOnly, description, "from-slate-700 to-slate-900");
                 bookService.addBook(newBook, currentUser);
                 session.setAttribute("flashMessage", "New book '" + title + "' added to catalog successfully.");
                 session.setAttribute("flashType", "success");
@@ -121,4 +175,3 @@ public class LibraryActionServlet extends HttpServlet {
         response.sendRedirect(request.getContextPath() + "/dashboard?tab=" + redirectTab);
     }
 }
-

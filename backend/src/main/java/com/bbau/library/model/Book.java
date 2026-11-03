@@ -17,28 +17,38 @@ public class Book implements Serializable {
     private int id;
     private String title;
     private String author;
+    private String authorInfo;
     private String subject;
     private String isbn;
     private int totalCopies;
     private int availableCopies;
     private boolean facultyOnly;
-    private String description;
+    private String description; // Book Introduction
+    private String coverColor;  // UI gradient theme / badge
 
     public Book() {
         this.totalCopies = 1;
         this.availableCopies = 1;
+        this.coverColor = "from-slate-700 to-slate-900";
     }
 
-    public Book(int id, String title, String author, String subject, String isbn,
-                int totalCopies, int availableCopies, boolean facultyOnly, String description) {
+    public Book(int id, String title, String author, String authorInfo, String subject, String isbn,
+                int totalCopies, int availableCopies, boolean facultyOnly, String description, String coverColor) {
         this.id = id;
         setTitle(title);
         setAuthor(author);
+        this.authorInfo = authorInfo != null ? authorInfo : "Renowned academic authority and textbook author.";
         setSubject(subject);
         setIsbn(isbn);
         setCopies(totalCopies, availableCopies);
         this.facultyOnly = facultyOnly;
         this.description = description;
+        this.coverColor = coverColor != null ? coverColor : "from-slate-700 to-slate-900";
+    }
+
+    public Book(int id, String title, String author, String subject, String isbn,
+                int totalCopies, int availableCopies, boolean facultyOnly, String description) {
+        this(id, title, author, "Academic Author & Subject Specialist.", subject, isbn, totalCopies, availableCopies, facultyOnly, description, "from-slate-700 to-slate-900");
     }
 
     // ========================================================================
@@ -53,8 +63,14 @@ public class Book implements Serializable {
     }
 
     /**
+     * Calculates number of copies currently in circulation.
+     */
+    public int getIssuedCopies() {
+        return Math.max(0, this.totalCopies - this.availableCopies);
+    }
+
+    /**
      * Atomically decrements available copies when borrowed.
-     * Throws IllegalStateException if no copies remain.
      */
     public synchronized void borrowCopy() {
         if (!isAvailable()) {
@@ -65,7 +81,6 @@ public class Book implements Serializable {
 
     /**
      * Atomically increments available copies when a borrowed book is returned.
-     * Ensures available copies do not exceed total inventory.
      */
     public synchronized void returnCopy() {
         if (this.availableCopies >= this.totalCopies) {
@@ -92,18 +107,10 @@ public class Book implements Serializable {
     // GETTERS & SETTERS (Strict Encapsulation)
     // ========================================================================
 
-    public int getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
+    public String getTitle() { return title; }
     public void setTitle(String title) {
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Book title cannot be blank.");
@@ -111,10 +118,7 @@ public class Book implements Serializable {
         this.title = title.trim();
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
+    public String getAuthor() { return author; }
     public void setAuthor(String author) {
         if (author == null || author.trim().isEmpty()) {
             throw new IllegalArgumentException("Book author cannot be blank.");
@@ -122,26 +126,20 @@ public class Book implements Serializable {
         this.author = author.trim();
     }
 
-    public String getSubject() {
-        return subject;
-    }
+    public String getAuthorInfo() { return authorInfo; }
+    public void setAuthorInfo(String authorInfo) { this.authorInfo = authorInfo; }
 
+    public String getSubject() { return subject; }
     public void setSubject(String subject) {
         this.subject = (subject == null) ? "General" : subject.trim();
     }
 
-    public String getIsbn() {
-        return isbn;
-    }
-
+    public String getIsbn() { return isbn; }
     public void setIsbn(String isbn) {
         this.isbn = (isbn == null) ? "" : isbn.trim();
     }
 
-    public int getTotalCopies() {
-        return totalCopies;
-    }
-
+    public int getTotalCopies() { return totalCopies; }
     public void setTotalCopies(int totalCopies) {
         if (totalCopies < 0) {
             throw new IllegalArgumentException("Total copies cannot be negative.");
@@ -152,10 +150,7 @@ public class Book implements Serializable {
         }
     }
 
-    public int getAvailableCopies() {
-        return availableCopies;
-    }
-
+    public int getAvailableCopies() { return availableCopies; }
     public void setAvailableCopies(int availableCopies) {
         if (availableCopies < 0 || availableCopies > this.totalCopies) {
             throw new IllegalArgumentException("Available copies must be between 0 and total copies.");
@@ -163,21 +158,14 @@ public class Book implements Serializable {
         this.availableCopies = availableCopies;
     }
 
-    public boolean isFacultyOnly() {
-        return facultyOnly;
-    }
+    public boolean isFacultyOnly() { return facultyOnly; }
+    public void setFacultyOnly(boolean facultyOnly) { this.facultyOnly = facultyOnly; }
 
-    public void setFacultyOnly(boolean facultyOnly) {
-        this.facultyOnly = facultyOnly;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public String getCoverColor() { return coverColor; }
+    public void setCoverColor(String coverColor) { this.coverColor = coverColor; }
 
     @Override
     public boolean equals(Object o) {
@@ -190,16 +178,4 @@ public class Book implements Serializable {
     public int hashCode() {
         return Objects.hash(id);
     }
-
-    @Override
-    public String toString() {
-        return "Book{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", author='" + author + '\'' +
-                ", available=" + availableCopies + "/" + totalCopies +
-                ", facultyOnly=" + facultyOnly +
-                '}';
-    }
 }
-

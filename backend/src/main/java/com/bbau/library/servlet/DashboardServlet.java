@@ -4,13 +4,16 @@ import com.bbau.library.dao.UserDAO;
 import com.bbau.library.model.*;
 import com.bbau.library.service.BookService;
 import com.bbau.library.service.FineService;
+import com.bbau.library.service.LibraryStore;
 import com.bbau.library.service.LoanService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Controller servlet for patron and staff dashboard views.
@@ -73,6 +76,25 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("userFines", userFines);
         request.setAttribute("totalUnpaidFine", totalUnpaidFine);
 
+        // Community Discussions, Reviews, Notifications & Wishlist
+        LibraryStore store = LibraryStore.getInstance();
+        request.setAttribute("reviews", new ArrayList<>(store.getReviews().values()));
+        request.setAttribute("discussions", new ArrayList<>(store.getDiscussions().values()));
+
+        List<Notification> userNotifs = store.getNotifications().values().stream()
+                .filter(n -> user.getId().equalsIgnoreCase(n.getUserId()))
+                .sorted((a, b) -> Integer.compare(b.getId(), a.getId()))
+                .toList();
+        request.setAttribute("notifications", userNotifs);
+
+        List<Book> wishlistBooks = store.getWishlist().stream()
+                .filter(w -> w.startsWith(user.getId() + ":"))
+                .map(w -> Integer.parseInt(w.split(":")[1]))
+                .map(bid -> store.getBooks().get(bid))
+                .filter(Objects::nonNull)
+                .toList();
+        request.setAttribute("wishlistBooks", wishlistBooks);
+
         // Admin-only metrics and datasets
         if (user.isAdmin()) {
             List<User> allUsers = userDAO.findAll();
@@ -101,4 +123,3 @@ public class DashboardServlet extends HttpServlet {
         doGet(request, response);
     }
 }
-
