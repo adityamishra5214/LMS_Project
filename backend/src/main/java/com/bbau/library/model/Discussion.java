@@ -74,3 +74,4 @@ public class Discussion implements Serializable {
     public List<DiscussionReply> getReplies() { return replies; }
     public void setReplies(List<DiscussionReply> replies) { this.replies = replies; }
 }
+

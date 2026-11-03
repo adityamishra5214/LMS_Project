@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-50">
+<html lang="en" class="h-full bg-[#fbf9f5]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BBAU Central Library | Library Management System</title>
+    <title>BBAU Library | Library Management System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -12,6 +12,9 @@
             theme: {
                 extend: {
                     colors: {
+                        bbauGreen: '#1e3d2f',
+                        bbauGreenDark: '#142a20',
+                        bbauCream: '#fbf9f5',
                         watermelon: {
                             50: '#fff1f2',
                             100: '#ffe4e6',
@@ -35,7 +38,7 @@
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
-                        serif: ['Georgia', 'Cambria', 'serif']
+                        serifHeading: ['Georgia', 'Cambria', 'serif']
                     }
                 }
             }
@@ -43,643 +46,666 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body { font-family: 'Inter', sans-serif; background-color: #fbf9f5; }
+        .serif-title { font-family: 'Georgia', 'Playfair Display', serif; }
         .glass {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.94);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
-        .bento-card {
+        .portal-card {
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .bento-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 28px -10px rgba(225, 29, 72, 0.12);
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 30px -10px rgba(30, 61, 47, 0.12);
         }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="min-h-full flex flex-col text-slate-800 antialiased selection:bg-watermelon-500 selection:text-white bg-slate-50">
+<body class="min-h-full flex flex-col text-slate-800 antialiased selection:bg-watermelon-500 selection:text-white bg-[#fbf9f5]">
 
-    <!-- Top University Banner Header -->
-    <div class="bg-gradient-to-r from-watermelon-900 via-rose-900 to-watermelon-800 text-white border-b-2 border-watermelon-500">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
-            <!-- University Crest & Titles -->
-            <div class="flex items-center gap-3.5">
-                <div class="w-12 h-12 rounded-full bg-white p-1 flex items-center justify-center shadow-md ring-2 ring-watermelon-400">
-                    <!-- BBAU Emblem SVG -->
-                    <svg class="w-9 h-9 text-watermelon-800" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                    </svg>
-                </div>
-                <div>
-                    <div class="text-[11px] font-bold tracking-widest text-watermelon-200 uppercase">A Central University • NAAC Accredited 'A++'</div>
-                    <h1 class="text-lg sm:text-xl font-bold font-serif tracking-wide text-white leading-tight">Babasaheb Bhimrao Ambedkar University</h1>
-                    <div class="text-xs text-watermelon-100 flex items-center gap-2">
-                        <span>Gautam Buddha Central Library</span>
-                        <span>•</span>
-                        <span class="font-semibold text-rind-200">Library Management System</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Access / Role Switcher Header Pill -->
-            <div class="flex items-center gap-2.5 bg-black/25 backdrop-blur-md p-1.5 rounded-xl border border-white/15">
-                <div class="text-right px-2 hidden md:block">
-                    <div class="text-xs font-bold text-white" id="headerUserName">Aarav Gupta</div>
-                    <div class="text-[11px] text-watermelon-200" id="headerUserSubtitle">Student (3 Books / 14 Days)</div>
-                </div>
-                <!-- Role Selector Dropdown -->
-                <select onchange="switchRole(this.value)" id="roleSelector" class="bg-white text-slate-800 text-xs font-bold py-1.5 px-3 rounded-lg shadow-sm focus:outline-none cursor-pointer">
-                    <option value="student01">🎓 Student (Aarav Gupta)</option>
-                    <option value="student02">🎓 Student (Priya Singh)</option>
-                    <option value="student03">🎓 Student (Rohan Verma)</option>
-                    <option value="faculty01">👨‍🏫 Faculty (Prof. Sunita Verma)</option>
-                    <option value="faculty02">👨‍🏫 Faculty (Dr. Rajesh Kumar)</option>
-                    <option value="admin">🏛️ Administrator (Chief Librarian)</option>
-                </select>
-                <!-- Login / Signup Modal Trigger -->
-                <button onclick="openAuthModal()" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-watermelon-600 hover:bg-watermelon-500 text-white transition">
-                    Auth / Sign In
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sticky Main Navigation Bar -->
-    <header class="sticky top-0 z-30 border-b border-slate-200/80 glass shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-14">
-                <!-- Navigation Tabs -->
-                <nav class="flex items-center gap-1 overflow-x-auto py-1 custom-scrollbar w-full sm:w-auto" id="mainNavBar">
-                    <button onclick="navigateTab('catalog')" id="nav-catalog" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg bg-watermelon-600 text-white shadow-sm transition flex items-center gap-1.5 shrink-0">
-                        <span>📚</span> Book Catalogue
-                    </button>
-                    <button onclick="navigateTab('mybooks')" id="nav-mybooks" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0">
-                        <span>📖</span> My Books (<span id="myBooksCountBadge">2</span>)
-                    </button>
-                    <button onclick="navigateTab('wishlist')" id="nav-wishlist" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0">
-                        <span>💖</span> Wishlist (<span id="wishlistCountBadge">2</span>)
-                    </button>
-                    <button onclick="navigateTab('fines')" id="nav-fines" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0">
-                        <span>💳</span> Fine Section <span id="finesAlertBadge" class="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white">₹230</span>
-                    </button>
-                    <button onclick="navigateTab('discussions')" id="nav-discussions" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0">
-                        <span>💬</span> Reviews &amp; QA
-                    </button>
-                    <button onclick="navigateTab('notifications')" id="nav-notifications" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0">
-                        <span>🔔</span> Notifications (<span id="notifUnreadBadge">6</span>)
-                    </button>
-                    <button onclick="navigateTab('admin')" id="nav-admin" class="nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0 hidden">
-                        <span>⚙️</span> Admin Console
-                    </button>
-                </nav>
-
-                <!-- Current Role Badge -->
-                <div class="hidden lg:flex items-center gap-2">
-                    <span id="roleBadgeIndicator" class="px-2.5 py-1 rounded-full text-xs font-bold bg-watermelon-50 text-watermelon-700 border border-watermelon-200">
-                        Student Account
-                    </span>
-                </div>
-            </div>
+    <!-- ================================================================== -->
+    <!-- 1. AUTHENTIC BBAU BANNER (Exact Image from User)                    -->
+    <!-- ================================================================== -->
+    <header class="w-full bg-white border-b border-slate-200/90 shadow-sm overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <img src="assets/bbau-banner.jpg"
+                 alt="Babasaheb Bhimrao Ambedkar University (A Central University) - Accredited 'A++' Grade by NAAC"
+                 class="w-full h-auto object-contain max-h-[160px] sm:max-h-[190px] md:max-h-[220px] mx-auto block" />
         </div>
     </header>
 
-    <!-- Global Alert / Toast Bar -->
-    <div id="toastAlert" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="rounded-xl p-3.5 border text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm transition-all duration-300" id="toastAlertBox">
+    <!-- Top Floating Toast Notification -->
+    <div id="toastAlert" class="hidden fixed top-4 right-4 z-50 max-w-md w-full animate-in slide-in-from-top-4 duration-300">
+        <div class="rounded-xl p-3.5 border text-xs sm:text-sm font-medium flex items-center justify-between shadow-xl" id="toastAlertBox">
             <div class="flex items-center gap-2.5">
                 <span id="toastIcon" class="text-base">📢</span>
-                <span id="toastText">System alert notification</span>
+                <span id="toastText">System message</span>
             </div>
-            <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600 font-bold px-2">&times;</button>
+            <button onclick="hideToast()" class="text-slate-400 hover:text-slate-600 font-bold px-1.5">&times;</button>
         </div>
     </div>
 
-    <!-- Main Content Container -->
-    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <!-- ================================================================== -->
+    <!-- 2. SCREEN A: EXACT WELCOME LANDING SCREEN (Matching User Picture)    -->
+    <!-- ================================================================== -->
+    <section id="view-welcome" class="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 py-10 md:py-16 text-center">
+        <div class="max-w-3xl mx-auto space-y-3">
+            <!-- Eyebrow -->
+            <p class="text-[11px] sm:text-xs font-bold tracking-[0.25em] text-[#556b5a] uppercase">
+                WELCOME TO
+            </p>
 
-        <!-- 1. BENTO OPERATIONAL KPI HEADER -->
-        <section class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
-            <div class="bento-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Repository Titles</div>
-                <div class="mt-1 flex items-baseline gap-1.5">
-                    <span class="text-2xl font-bold text-slate-900" id="kpiTotalTitles">21</span>
-                    <span class="text-xs text-slate-500">books in 11 subjects</span>
+            <!-- Main Heading in University Forest Green -->
+            <h1 class="serif-title text-4xl sm:text-5xl md:text-6xl font-bold text-[#1e3d2f] tracking-tight">
+                BBAU Library
+            </h1>
+
+            <!-- Subtitle -->
+            <h2 class="text-base sm:text-lg font-medium text-slate-600">
+                Library Management System
+            </h2>
+
+            <!-- Lead Paragraph -->
+            <p class="text-xs sm:text-sm text-slate-500 max-w-xl mx-auto pt-1 leading-relaxed">
+                Discover books, explore knowledge, and manage your library journey.
+            </p>
+        </div>
+
+        <!-- The 3 Cards matching image: Student, Faculty, Admin -->
+        <div class="max-w-4xl w-full mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 sm:mt-12">
+            <!-- Card 1: Student -->
+            <div class="portal-card bg-white rounded-2xl p-6 sm:p-7 border border-[#e5dfd5] shadow-sm flex flex-col items-center text-center">
+                <!-- Stack of books icon -->
+                <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center text-3xl shadow-inner mb-3">
+                    📚
                 </div>
-                <div class="mt-1 text-[11px] text-rind-600 font-medium">✓ Real-time inventory synchronization</div>
+                <h3 class="text-base font-bold text-slate-900">Student</h3>
+                <p class="text-xs text-slate-500 mt-1 mb-5">Explore and borrow books</p>
+
+                <!-- 1-Click Demo Accounts -->
+                <div class="w-full space-y-2 mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">1-Click Demo Logins:</span>
+                    <button onclick="demoLogin('student01')" class="w-full py-2 px-3 bg-slate-50 hover:bg-watermelon-50 hover:text-watermelon-700 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition flex items-center justify-between">
+                        <span>Aarav Gupta</span>
+                        <span class="text-[10px] font-mono text-slate-400">student01 &rarr;</span>
+                    </button>
+                    <button onclick="demoLogin('student02')" class="w-full py-1.5 px-3 bg-slate-50 hover:bg-watermelon-50 hover:text-watermelon-700 text-slate-700 rounded-lg text-xs font-medium border border-slate-200 transition flex items-center justify-between">
+                        <span>Priya Singh</span>
+                        <span class="text-[10px] font-mono text-slate-400">student02 &rarr;</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="bento-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lending Quota</div>
-                <div class="mt-1 flex items-baseline gap-1.5">
-                    <span class="text-2xl font-bold text-watermelon-600" id="kpiQuotaRatio">2 / 3</span>
-                    <span class="text-xs text-slate-500">books issued</span>
+            <!-- Card 2: Faculty -->
+            <div class="portal-card bg-white rounded-2xl p-6 sm:p-7 border border-[#e5dfd5] shadow-sm flex flex-col items-center text-center">
+                <!-- Mortarboard / Graduation cap icon -->
+                <div class="w-16 h-16 rounded-2xl bg-indigo-50 flex items-center justify-center text-3xl shadow-inner mb-3">
+                    🎓
                 </div>
-                <div class="mt-1 text-[11px] text-slate-500" id="kpiQuotaDesc">Student limit: max 3 concurrent loans</div>
+                <h3 class="text-base font-bold text-slate-900">Faculty</h3>
+                <p class="text-xs text-slate-500 mt-1 mb-5">Access faculty resources</p>
+
+                <!-- 1-Click Demo Accounts -->
+                <div class="w-full space-y-2 mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">1-Click Demo Logins:</span>
+                    <button onclick="demoLogin('faculty01')" class="w-full py-2 px-3 bg-slate-50 hover:bg-rind-50 hover:text-rind-700 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition flex items-center justify-between">
+                        <span>Prof. Sunita Verma</span>
+                        <span class="text-[10px] font-mono text-slate-400">faculty01 &rarr;</span>
+                    </button>
+                    <button onclick="demoLogin('faculty02')" class="w-full py-1.5 px-3 bg-slate-50 hover:bg-rind-50 hover:text-rind-700 text-slate-700 rounded-lg text-xs font-medium border border-slate-200 transition flex items-center justify-between">
+                        <span>Dr. Rajesh Kumar</span>
+                        <span class="text-[10px] font-mono text-slate-400">faculty02 &rarr;</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="bento-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Loan Period</div>
-                <div class="mt-1 flex items-baseline gap-1.5">
-                    <span class="text-2xl font-bold text-slate-900" id="kpiLoanDays">14 Days</span>
-                    <span class="text-xs text-slate-500">per checkout</span>
+            <!-- Card 3: Admin -->
+            <div class="portal-card bg-white rounded-2xl p-6 sm:p-7 border border-[#e5dfd5] shadow-sm flex flex-col items-center text-center">
+                <!-- Lock with key icon -->
+                <div class="w-16 h-16 rounded-2xl bg-rose-50 flex items-center justify-center text-3xl shadow-inner mb-3">
+                    🔐
                 </div>
-                <div class="mt-1 text-[11px] text-slate-500" id="kpiLoanDaysDesc">Faculty gets 30 days loan period</div>
-            </div>
+                <h3 class="text-base font-bold text-slate-900">Admin</h3>
+                <p class="text-xs text-slate-500 mt-1 mb-5">Manage library records</p>
 
-            <div class="bento-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overdue Fine Rate</div>
-                <div class="mt-1 flex items-baseline gap-1.5">
-                    <span class="text-2xl font-bold text-rose-600" id="kpiFineRate">₹5 / day</span>
-                    <span class="text-xs text-slate-500">after due date</span>
+                <!-- 1-Click Demo Accounts -->
+                <div class="w-full space-y-2 mt-auto border-t border-slate-100 pt-4">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">1-Click Demo Logins:</span>
+                    <button onclick="demoLogin('admin')" class="w-full py-2 px-3 bg-[#1e3d2f] hover:bg-[#142a20] text-white rounded-lg text-xs font-bold shadow transition flex items-center justify-between">
+                        <span>Chief Librarian</span>
+                        <span class="text-[10px] font-mono text-rind-200">admin &rarr;</span>
+                    </button>
+                    <button onclick="openAuthModal('signup')" class="w-full py-1.5 px-3 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold border border-slate-200 transition text-center">
+                        + Self Sign Up (Student / Faculty)
+                    </button>
                 </div>
-                <div class="mt-1 text-[11px] text-slate-500">Damaged: ₹200 • Lost: ₹500</div>
             </div>
-        </section>
+        </div>
 
-        <!-- 2. SECTION: BOOK CATALOGUE (Requirement 2.1) -->
-        <section id="section-catalog" class="space-y-4">
-            <!-- Filter & Search Toolbar -->
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                <div class="flex flex-col md:flex-row items-center justify-between gap-3">
-                    <!-- Text Search (Book Title or Author) -->
-                    <div class="relative w-full md:w-96">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-                        </span>
-                        <input type="text" id="catalogSearchInput" oninput="filterCatalogue()" placeholder="Search by book title, author name, or ISBN..."
-                               class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-watermelon-500 focus:bg-white transition">
+        <div class="mt-12 text-xs text-slate-400">
+            Object-Oriented Programming (OOP) Backend &bull; Jakarta Servlet &bull; Watermelon UI Tailwind System
+        </div>
+    </section>
+
+    <!-- ================================================================== -->
+    <!-- 3. SCREEN B: LIVE INTERACTIVE DASHBOARDS (Student, Faculty, Admin)   -->
+    <!-- ================================================================== -->
+    <div id="view-dashboard" class="hidden flex-1 flex flex-col">
+        <!-- Dashboard Top Navigation Toolbar -->
+        <header class="sticky top-0 z-30 border-b border-slate-200/90 glass shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-14">
+                    <!-- Brand snippet & Back to Home button -->
+                    <div class="flex items-center gap-3">
+                        <button onclick="logoutToHome()" title="Return to Welcome Screen" class="px-2.5 py-1 text-xs font-bold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center gap-1 transition">
+                            <span>&larr;</span> Log Out
+                        </button>
+                        <div class="hidden sm:block border-l border-slate-200 pl-3">
+                            <span class="text-xs font-bold text-[#1e3d2f]">BBAU Central Library</span>
+                        </div>
                     </div>
 
-                    <!-- Category / Subject Filter Dropdown -->
-                    <div class="flex items-center gap-2 w-full md:w-auto">
-                        <label class="text-xs font-bold text-slate-600 whitespace-nowrap">Subject Filter:</label>
-                        <select id="catalogSubjectSelect" onchange="filterCatalogue()" class="bg-slate-50 border border-slate-200 text-xs font-semibold rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-watermelon-500 w-full md:w-auto cursor-pointer">
-                            <option value="ALL">All Categories &amp; Subjects (11)</option>
-                            <option value="Core Java">Core Java</option>
-                            <option value="C and C++">C and C++</option>
-                            <option value="Data Structures and Algorithms">Data Structures and Algorithms</option>
-                            <option value="DBMS">DBMS</option>
-                            <option value="Operating Systems">Operating Systems</option>
-                            <option value="Computer Networks">Computer Networks</option>
-                            <option value="Digital Electronics">Digital Electronics</option>
-                            <option value="Digital Design">Digital Design</option>
-                            <option value="Engineering Mathematics">Engineering Mathematics</option>
-                            <option value="Artificial Intelligence">Artificial Intelligence</option>
-                            <option value="General Academic">General Academic</option>
-                            <option value="Faculty-Only Reserve">Faculty-Only Reserve Collection</option>
-                        </select>
+                    <!-- Main Navigation Tabs -->
+                    <nav class="flex items-center gap-1 overflow-x-auto py-1 custom-scrollbar max-w-2xl" id="dashNavBar">
+                        <button onclick="navigateTab('catalog')" id="nav-catalog" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-watermelon-600 text-white shadow-sm flex items-center gap-1 shrink-0">
+                            <span>📚</span> Catalogue
+                        </button>
+                        <button onclick="navigateTab('mybooks')" id="nav-mybooks" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0">
+                            <span>📖</span> My Books (<span id="myBooksCountBadge">2</span>)
+                        </button>
+                        <button onclick="navigateTab('wishlist')" id="nav-wishlist" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0">
+                            <span>💖</span> Wishlist (<span id="wishlistCountBadge">2</span>)
+                        </button>
+                        <button onclick="navigateTab('fines')" id="nav-fines" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0">
+                            <span>💳</span> Fines <span id="finesAlertBadge" class="ml-1 px-1.5 py-0.2 text-[10px] rounded-full bg-rose-500 text-white">₹230</span>
+                        </button>
+                        <button onclick="navigateTab('discussions')" id="nav-discussions" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0">
+                            <span>💬</span> Reviews &amp; QA
+                        </button>
+                        <button onclick="navigateTab('notifications')" id="nav-notifications" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0">
+                            <span>🔔</span> Notices (<span id="notifUnreadBadge">6</span>)
+                        </button>
+                        <button onclick="navigateTab('admin')" id="nav-admin" class="nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0 hidden">
+                            <span>⚙️</span> Admin Console
+                        </button>
+                    </nav>
 
-                        <!-- Availability toggle -->
-                        <select id="catalogAvailabilitySelect" onchange="filterCatalogue()" class="bg-slate-50 border border-slate-200 text-xs font-semibold rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-watermelon-500 cursor-pointer">
-                            <option value="ALL">All Stock Status</option>
-                            <option value="AVAILABLE">Available on Shelf Only</option>
-                            <option value="OUT">All Copies Issued</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Subject Category Chips -->
-                <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
-                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">Quick Select:</span>
-                    <button onclick="quickFilterSubject('Core Java')" class="px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 hover:bg-amber-100 font-medium shrink-0">Core Java</button>
-                    <button onclick="quickFilterSubject('C and C++')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 hover:bg-blue-100 font-medium shrink-0">C &amp; C++</button>
-                    <button onclick="quickFilterSubject('Data Structures and Algorithms')" class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-medium shrink-0">DSA</button>
-                    <button onclick="quickFilterSubject('DBMS')" class="px-2.5 py-1 rounded-md bg-cyan-50 text-cyan-800 hover:bg-cyan-100 font-medium shrink-0">DBMS</button>
-                    <button onclick="quickFilterSubject('Operating Systems')" class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-800 hover:bg-purple-100 font-medium shrink-0">Operating Systems</button>
-                    <button onclick="quickFilterSubject('Computer Networks')" class="px-2.5 py-1 rounded-md bg-rose-50 text-rose-800 hover:bg-rose-100 font-medium shrink-0">Networks</button>
-                    <button onclick="quickFilterSubject('Engineering Mathematics')" class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 hover:bg-teal-100 font-medium shrink-0">Engg Math</button>
-                    <button onclick="quickFilterSubject('Artificial Intelligence')" class="px-2.5 py-1 rounded-md bg-fuchsia-50 text-fuchsia-800 hover:bg-fuchsia-100 font-medium shrink-0">AI</button>
-                    <button onclick="quickFilterSubject('Faculty-Only Reserve')" class="px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-800 hover:bg-yellow-100 font-bold shrink-0 border border-yellow-300">⭐ Faculty Reserve</button>
-                </div>
-            </div>
-
-            <!-- Book Cards Grid (Requirement 2.1) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="catalogueGrid">
-                <!-- Dynamically generated via renderCatalogue() -->
-            </div>
-        </section>
-
-        <!-- 3. SECTION: MY BOOKS (Requirement 2.3) -->
-        <section id="section-mybooks" class="hidden space-y-5">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-3">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">My Borrowed Books &amp; Loan History</h2>
-                        <p class="text-xs text-slate-500">Track active borrowings, due dates, overdue counts, and previous return records.</p>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <button onclick="toggleMyBooksView('active')" id="myBooksTabActive" class="px-3 py-1.5 rounded-lg bg-watermelon-600 text-white font-bold shadow-sm">Currently Issued (<span id="activeLoansCountText">2</span>)</button>
-                        <button onclick="toggleMyBooksView('history')" id="myBooksTabHistory" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold hover:bg-slate-200">Returned History (<span id="historyLoansCountText">2</span>)</button>
-                    </div>
-                </div>
-
-                <!-- Table for Currently Issued Books -->
-                <div id="issuedBooksContainer" class="mt-4 overflow-x-auto">
-                    <table class="w-full text-left text-xs sm:text-sm">
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
-                            <tr>
-                                <th class="py-3 px-3">Loan ID</th>
-                                <th class="py-3 px-3">Book Title</th>
-                                <th class="py-3 px-3">Issue Date</th>
-                                <th class="py-3 px-3">Due Date</th>
-                                <th class="py-3 px-3">Status</th>
-                                <th class="py-3 px-3 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="issuedBooksTableBody" class="divide-y divide-slate-100">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Table for Previously Returned Books -->
-                <div id="returnedHistoryContainer" class="mt-4 overflow-x-auto hidden">
-                    <table class="w-full text-left text-xs sm:text-sm">
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
-                            <tr>
-                                <th class="py-3 px-3">Loan ID</th>
-                                <th class="py-3 px-3">Book Title</th>
-                                <th class="py-3 px-3">Issue Date</th>
-                                <th class="py-3 px-3">Due Date</th>
-                                <th class="py-3 px-3">Actual Return Date</th>
-                                <th class="py-3 px-3">Condition Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="returnedHistoryTableBody" class="divide-y divide-slate-100">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- 4. SECTION: WISHLIST (Requirement 2.4) -->
-        <section id="section-wishlist" class="hidden space-y-4">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">Saved Wishlist Items</h2>
-                        <p class="text-xs text-slate-500">Save titles you plan to borrow. Check real-time shelf availability and issue immediately.</p>
-                    </div>
-                    <span class="text-xs font-semibold px-2.5 py-1 bg-watermelon-50 text-watermelon-700 rounded-lg" id="wishlistHeaderCount">2 items saved</span>
-                </div>
-
-                <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5" id="wishlistGrid">
-                    <!-- Rendered dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 5. SECTION: FINE SECTION & PAYMENT GATEWAY (Requirement 2.5) -->
-        <section id="section-fines" class="hidden space-y-5">
-            <!-- Fine Policy Banner -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
-                    <div class="text-xs font-bold text-slate-400 uppercase">Late Return Fee</div>
-                    <div class="text-2xl font-extrabold text-rose-600 mt-1">₹5 / Day</div>
-                    <p class="text-[11px] text-slate-500 mt-1">Assessed automatically on all active loans past scheduled due dates.</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
-                    <div class="text-xs font-bold text-slate-400 uppercase">Damaged Book Fine</div>
-                    <div class="text-2xl font-extrabold text-amber-600 mt-1">₹200</div>
-                    <p class="text-[11px] text-slate-500 mt-1">Charged when returned books have torn pages, missing covers, or binding damage.</p>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500">
-                    <div class="text-xs font-bold text-slate-400 uppercase">Lost Book Replacement</div>
-                    <div class="text-2xl font-extrabold text-purple-600 mt-1">₹500</div>
-                    <p class="text-[11px] text-slate-500 mt-1">Assessed when a borrower reports a book unrecoverable or stolen.</p>
-                </div>
-            </div>
-
-            <!-- Fine Records & Payment Actions -->
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-2">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">Fine Records &amp; Payment Gateway</h2>
-                        <p class="text-xs text-slate-500">View pending library dues, review previous payment receipts, and settle dues online.</p>
-                    </div>
+                    <!-- Active User Indicator -->
                     <div class="flex items-center gap-2">
-                        <span class="text-xs font-bold text-slate-700">Total Outstanding:</span>
-                        <span class="text-sm font-extrabold px-3 py-1 rounded-lg bg-rose-100 text-rose-800" id="fineTotalUnpaidBanner">₹230</span>
+                        <div class="text-right hidden md:block">
+                            <div class="text-xs font-bold text-slate-900" id="dashUserHeading">Aarav Gupta</div>
+                            <div class="text-[10px] text-slate-500" id="dashUserSubtitle">Student Account</div>
+                        </div>
+                        <span id="dashRoleBadge" class="px-2 py-0.5 rounded-full text-[11px] font-bold bg-watermelon-50 text-watermelon-700 border border-watermelon-200">
+                            Student
+                        </span>
                     </div>
-                </div>
-
-                <!-- Fines Table -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs sm:text-sm">
-                        <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
-                            <tr>
-                                <th class="py-3 px-3">Fine ID</th>
-                                <th class="py-3 px-3">Type &amp; Description</th>
-                                <th class="py-3 px-3">Book Title</th>
-                                <th class="py-3 px-3">Amount</th>
-                                <th class="py-3 px-3">Status</th>
-                                <th class="py-3 px-3 text-right">Payment Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="finesTableBody" class="divide-y divide-slate-100">
-                            <!-- Rendered dynamically -->
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </section>
+        </header>
 
-        <!-- 6. SECTION: REVIEWS AND DISCUSSIONS (Requirement 2.6) -->
-        <section id="section-discussions" class="hidden space-y-5">
-            <!-- Review Submission Card -->
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">Student &amp; Faculty Book Reviews</h2>
-                        <p class="text-xs text-slate-500">Share your rating (1-5 stars) and thoughts to help university peers choose resources.</p>
+        <!-- Main Dashboard Workspace -->
+        <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+            <!-- Bento Operational KPIs -->
+            <section class="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Repository Titles</div>
+                    <div class="mt-1 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-slate-900" id="kpiTotalTitles">21</span>
+                        <span class="text-xs text-slate-500">books in 11 subjects</span>
                     </div>
-                    <button onclick="toggleReviewForm()" class="px-3 py-1.5 rounded-lg bg-watermelon-600 hover:bg-watermelon-700 text-white text-xs font-bold transition">
-                        + Write a Review
-                    </button>
+                    <div class="mt-1 text-[11px] text-rind-600 font-medium">✓ Real-time inventory sync</div>
                 </div>
 
-                <!-- Hidden Collapsible Review Form -->
-                <form id="writeReviewForm" onsubmit="handleReviewSubmit(event)" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Select Book</label>
-                            <select id="reviewBookSelect" class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-watermelon-500">
-                                <!-- Populated dynamically -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Lending Quota</div>
+                    <div class="mt-1 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-watermelon-600" id="kpiQuotaRatio">2 / 3</span>
+                        <span class="text-xs text-slate-500">books issued</span>
+                    </div>
+                    <div class="mt-1 text-[11px] text-slate-500" id="kpiQuotaDesc">Student limit: max 3 concurrent loans</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Loan Period</div>
+                    <div class="mt-1 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-slate-900" id="kpiLoanDays">14 Days</span>
+                        <span class="text-xs text-slate-500">per checkout</span>
+                    </div>
+                    <div class="mt-1 text-[11px] text-slate-500" id="kpiLoanDaysDesc">Faculty gets 30 days loan period</div>
+                </div>
+
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Overdue Fine Rate</div>
+                    <div class="mt-1 flex items-baseline gap-1.5">
+                        <span class="text-2xl font-bold text-rose-600" id="kpiFineRate">₹5 / day</span>
+                        <span class="text-xs text-slate-500">after due date</span>
+                    </div>
+                    <div class="mt-1 text-[11px] text-slate-500">Damaged: ₹200 • Lost: ₹500</div>
+                </div>
+            </section>
+
+            <!-- 1. SECTION: CATALOGUE -->
+            <section id="section-catalog" class="space-y-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+                        <div class="relative w-full md:w-96">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 pointer-events-none">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                            </span>
+                            <input type="text" id="catalogSearchInput" oninput="filterCatalogue()" placeholder="Search by title, author name, or ISBN..."
+                                   class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-watermelon-500">
+                        </div>
+
+                        <div class="flex items-center gap-2 w-full md:w-auto">
+                            <select id="catalogSubjectSelect" onchange="filterCatalogue()" class="bg-slate-50 border border-slate-200 text-xs font-semibold rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-watermelon-500 w-full md:w-auto cursor-pointer">
+                                <option value="ALL">All Subjects &amp; Categories (11)</option>
+                                <option value="Core Java">Core Java</option>
+                                <option value="C and C++">C and C++</option>
+                                <option value="Data Structures and Algorithms">Data Structures and Algorithms</option>
+                                <option value="DBMS">DBMS</option>
+                                <option value="Operating Systems">Operating Systems</option>
+                                <option value="Computer Networks">Computer Networks</option>
+                                <option value="Digital Electronics">Digital Electronics</option>
+                                <option value="Digital Design">Digital Design</option>
+                                <option value="Engineering Mathematics">Engineering Mathematics</option>
+                                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                <option value="General Academic">General Academic</option>
+                                <option value="Faculty-Only Reserve">Faculty-Only Reserve Collection</option>
+                            </select>
+
+                            <select id="catalogAvailabilitySelect" onchange="filterCatalogue()" class="bg-slate-50 border border-slate-200 text-xs font-semibold rounded-lg px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-watermelon-500 cursor-pointer">
+                                <option value="ALL">All Stock Status</option>
+                                <option value="AVAILABLE">Available on Shelf Only</option>
+                                <option value="OUT">All Copies Issued</option>
                             </select>
                         </div>
+                    </div>
+
+                    <!-- Category Chips -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs custom-scrollbar">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1">Filter:</span>
+                        <button onclick="quickFilterSubject('Core Java')" class="px-2.5 py-1 rounded-md bg-amber-50 text-amber-800 hover:bg-amber-100 font-medium shrink-0">Core Java</button>
+                        <button onclick="quickFilterSubject('C and C++')" class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-800 hover:bg-blue-100 font-medium shrink-0">C &amp; C++</button>
+                        <button onclick="quickFilterSubject('Data Structures and Algorithms')" class="px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-medium shrink-0">DSA</button>
+                        <button onclick="quickFilterSubject('DBMS')" class="px-2.5 py-1 rounded-md bg-cyan-50 text-cyan-800 hover:bg-cyan-100 font-medium shrink-0">DBMS</button>
+                        <button onclick="quickFilterSubject('Operating Systems')" class="px-2.5 py-1 rounded-md bg-purple-50 text-purple-800 hover:bg-purple-100 font-medium shrink-0">Operating Systems</button>
+                        <button onclick="quickFilterSubject('Computer Networks')" class="px-2.5 py-1 rounded-md bg-rose-50 text-rose-800 hover:bg-rose-100 font-medium shrink-0">Networks</button>
+                        <button onclick="quickFilterSubject('Engineering Mathematics')" class="px-2.5 py-1 rounded-md bg-teal-50 text-teal-800 hover:bg-teal-100 font-medium shrink-0">Mathematics</button>
+                        <button onclick="quickFilterSubject('Artificial Intelligence')" class="px-2.5 py-1 rounded-md bg-fuchsia-50 text-fuchsia-800 hover:bg-fuchsia-100 font-medium shrink-0">AI</button>
+                        <button onclick="quickFilterSubject('Faculty-Only Reserve')" class="px-2.5 py-1 rounded-md bg-yellow-50 text-yellow-800 hover:bg-yellow-100 font-bold shrink-0 border border-yellow-300">⭐ Faculty Reserve</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="catalogueGrid">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- 2. SECTION: MY BOOKS -->
+            <section id="section-mybooks" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Star Rating</label>
-                            <select id="reviewStarRating" class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-watermelon-500">
-                                <option value="5">⭐⭐⭐⭐⭐ (5 Stars - Outstanding)</option>
-                                <option value="4">⭐⭐⭐⭐ (4 Stars - Very Good)</option>
-                                <option value="3">⭐⭐⭐ (3 Stars - Average)</option>
-                                <option value="2">⭐⭐ (2 Stars - Mediocre)</option>
-                                <option value="1">⭐ (1 Star - Poor)</option>
-                            </select>
+                            <h2 class="text-base font-bold text-slate-900">My Books &amp; Borrowing History</h2>
+                            <p class="text-xs text-slate-500">Track active loans, scheduled due dates, and past return history.</p>
+                        </div>
+                        <div class="flex gap-2 text-xs">
+                            <button onclick="toggleMyBooksView('active')" id="myBooksTabActive" class="px-3 py-1.5 rounded-lg bg-watermelon-600 text-white font-bold shadow-sm">Currently Issued (<span id="activeLoansCountText">2</span>)</button>
+                            <button onclick="toggleMyBooksView('history')" id="myBooksTabHistory" class="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-bold hover:bg-slate-200">Returned History (<span id="historyLoansCountText">2</span>)</button>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Review Headline</label>
-                        <input type="text" id="reviewHeadline" required placeholder="e.g. Masterpiece for algorithmic understanding" class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-watermelon-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Detailed Review</label>
-                        <textarea id="reviewBody" required rows="2" placeholder="Write feedback regarding clarity, exercises, code quality..." class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-watermelon-500"></textarea>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <button type="button" onclick="toggleReviewForm()" class="px-3 py-1.5 text-xs text-slate-600 font-semibold hover:bg-slate-200 rounded-lg">Cancel</button>
-                        <button type="submit" class="px-4 py-1.5 text-xs bg-watermelon-600 text-white font-bold rounded-lg hover:bg-watermelon-700">Submit Review</button>
-                    </div>
-                </form>
 
-                <!-- Reviews Feed -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="reviewsFeedContainer">
-                    <!-- Rendered dynamically -->
+                    <div id="issuedBooksContainer" class="mt-4 overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
+                                <tr>
+                                    <th class="py-3 px-3">Loan ID</th>
+                                    <th class="py-3 px-3">Book Title</th>
+                                    <th class="py-3 px-3">Issue Date</th>
+                                    <th class="py-3 px-3">Due Date</th>
+                                    <th class="py-3 px-3">Status</th>
+                                    <th class="py-3 px-3 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuedBooksTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+
+                    <div id="returnedHistoryContainer" class="mt-4 overflow-x-auto hidden">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
+                                <tr>
+                                    <th class="py-3 px-3">Loan ID</th>
+                                    <th class="py-3 px-3">Book Title</th>
+                                    <th class="py-3 px-3">Issue Date</th>
+                                    <th class="py-3 px-3">Due Date</th>
+                                    <th class="py-3 px-3">Return Date</th>
+                                    <th class="py-3 px-3">Condition Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="returnedHistoryTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Q&A and Book Discussions -->
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">Book Q&amp;A &amp; Academic Discussions</h2>
-                        <p class="text-xs text-slate-500">Ask questions regarding book chapters, concepts, and receive answers from faculty and students.</p>
-                    </div>
-                    <button onclick="toggleDiscussionForm()" class="px-3 py-1.5 rounded-lg bg-rind-600 hover:bg-rind-700 text-white text-xs font-bold transition">
-                        + Ask a Question
-                    </button>
-                </div>
-
-                <!-- Hidden Question Form -->
-                <form id="askQuestionForm" onsubmit="handleDiscussionSubmit(event)" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- 3. SECTION: WISHLIST -->
+            <section id="section-wishlist" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Target Book</label>
-                            <select id="discussionBookSelect" class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-rind-500">
-                                <!-- Populated dynamically -->
-                            </select>
+                            <h2 class="text-base font-bold text-slate-900">Saved Wishlist Items</h2>
+                            <p class="text-xs text-slate-500">Monitor availability and issue saved items when copies arrive on shelf.</p>
                         </div>
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-watermelon-50 text-watermelon-700 rounded-lg" id="wishlistHeaderCount">2 items saved</span>
+                    </div>
+                    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5" id="wishlistGrid"></div>
+                </div>
+            </section>
+
+            <!-- 4. SECTION: FINES -->
+            <section id="section-fines" class="hidden space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-rose-500">
+                        <div class="text-xs font-bold text-slate-400 uppercase">Late Return Fee</div>
+                        <div class="text-2xl font-extrabold text-rose-600 mt-1">₹5 / Day</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Charged daily for overdue checkouts.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-amber-500">
+                        <div class="text-xs font-bold text-slate-400 uppercase">Damaged Book Fine</div>
+                        <div class="text-2xl font-extrabold text-amber-600 mt-1">₹200</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Assessed on torn pages or spine breakage.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm border-l-4 border-l-purple-500">
+                        <div class="text-xs font-bold text-slate-400 uppercase">Lost Book Replacement</div>
+                        <div class="text-2xl font-extrabold text-purple-600 mt-1">₹500</div>
+                        <p class="text-[11px] text-slate-500 mt-1">Replacement fee for unrecoverable copies.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-2">
                         <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Discussion Subject / Topic</label>
-                            <input type="text" id="discussionTitle" required placeholder="e.g. Page 142: Thread race conditions in OS" class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-rind-500">
+                            <h2 class="text-base font-bold text-slate-900">Fine Records &amp; Payment Gateway</h2>
+                            <p class="text-xs text-slate-500">Settle pending library dues securely online via UPI, Card, or Smart Card.</p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-slate-700">Total Unpaid:</span>
+                            <span class="text-sm font-extrabold px-3 py-1 rounded-lg bg-rose-100 text-rose-800" id="fineTotalUnpaidBanner">₹230</span>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Your Question / Discussion Details</label>
-                        <textarea id="discussionQuery" required rows="2" placeholder="Explain what concept or exercise you need help with..." class="w-full bg-white border border-slate-300 rounded-lg text-xs p-2 focus:ring-2 focus:ring-rind-500"></textarea>
-                    </div>
-                    <div class="flex justify-end gap-2">
-                        <button type="button" onclick="toggleDiscussionForm()" class="px-3 py-1.5 text-xs text-slate-600 font-semibold hover:bg-slate-200 rounded-lg">Cancel</button>
-                        <button type="submit" class="px-4 py-1.5 text-xs bg-rind-600 text-white font-bold rounded-lg hover:bg-rind-700">Post Question</button>
-                    </div>
-                </form>
-
-                <!-- Discussions Thread List -->
-                <div class="space-y-4" id="discussionsContainer">
-                    <!-- Rendered dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 7. SECTION: NOTIFICATIONS (Requirement 2.7) -->
-        <section id="section-notifications" class="hidden space-y-4">
-            <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-base font-bold text-slate-900">Patron Notification Hub</h2>
-                        <p class="text-xs text-slate-500">Issue confirmations, return receipts, due date reminders, overdue warnings, and payment receipts.</p>
-                    </div>
-                    <button onclick="markAllNotificationsRead()" class="text-xs font-semibold text-watermelon-600 hover:text-watermelon-700">Mark all as read</button>
-                </div>
-
-                <div class="space-y-2.5" id="notificationsListContainer">
-                    <!-- Rendered dynamically -->
-                </div>
-            </div>
-        </section>
-
-        <!-- 8. SECTION: ADMIN DASHBOARD (Requirement 4.1 - 4.4) -->
-        <section id="section-admin" class="hidden space-y-5">
-            <!-- Admin Navigation Sub-tabs -->
-            <div class="flex border-b border-slate-200 text-xs font-bold space-x-2">
-                <button onclick="switchAdminTab('students')" id="adminSubTab-students" class="py-2 px-3 border-b-2 border-watermelon-600 text-watermelon-700">4.1 Student Records</button>
-                <button onclick="switchAdminTab('books')" id="adminSubTab-books" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.2 Book Management</button>
-                <button onclick="switchAdminTab('availability')" id="adminSubTab-availability" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.3 Book Availability</button>
-                <button onclick="switchAdminTab('libraryrecords')" id="adminSubTab-libraryrecords" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.4 Library Circulation Records</button>
-            </div>
-
-            <!-- 4.1 Student Records Sub-View -->
-            <div id="adminView-students" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-100">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-900">Student &amp; Patron Ledger</h3>
-                        <p class="text-xs text-slate-500">Search student accounts, view active checkouts, borrow history, and fine balances.</p>
-                    </div>
-                    <input type="text" id="adminStudentSearch" oninput="renderAdminStudentRecords()" placeholder="Search by name, roll no, or ID..."
-                           class="w-full sm:w-72 px-3 py-1.5 border border-slate-200 rounded-lg text-xs focus:ring-2 focus:ring-watermelon-500">
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
-                            <tr>
-                                <th class="p-2.5">User ID</th>
-                                <th class="p-2.5">Student Name</th>
-                                <th class="p-2.5">Department &amp; Roll</th>
-                                <th class="p-2.5">Active Loans</th>
-                                <th class="p-2.5">Total Borrowed</th>
-                                <th class="p-2.5">Unpaid Dues</th>
-                                <th class="p-2.5 text-right">Audit</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminStudentsTableBody" class="divide-y divide-slate-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 4.2 Book Management Sub-View -->
-            <div id="adminView-books" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4 hidden">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-900">Add New Book to Repository</h3>
-                        <p class="text-xs text-slate-500">Expand the university catalog with full metadata and faculty access controls.</p>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase text-[11px] font-semibold tracking-wider">
+                                <tr>
+                                    <th class="py-3 px-3">Fine ID</th>
+                                    <th class="py-3 px-3">Type &amp; Description</th>
+                                    <th class="py-3 px-3">Book Title</th>
+                                    <th class="py-3 px-3">Amount</th>
+                                    <th class="py-3 px-3">Status</th>
+                                    <th class="py-3 px-3 text-right">Payment Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finesTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
                     </div>
                 </div>
-                <form onsubmit="handleAdminAddNewBook(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Book Title *</label>
-                        <input type="text" id="addBookTitle" required placeholder="e.g. Compiler Design Principles" class="w-full p-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Author Name *</label>
-                        <input type="text" id="addBookAuthor" required placeholder="e.g. Aho, Ullman, Sethi" class="w-full p-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Author Bio / Info</label>
-                        <input type="text" id="addBookAuthorInfo" placeholder="e.g. Stanford & Columbia University Professors" class="w-full p-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Subject / Category *</label>
-                        <select id="addBookSubject" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
-                            <option value="Core Java">Core Java</option>
-                            <option value="C and C++">C and C++</option>
-                            <option value="Data Structures and Algorithms">Data Structures and Algorithms</option>
-                            <option value="DBMS">DBMS</option>
-                            <option value="Operating Systems">Operating Systems</option>
-                            <option value="Computer Networks">Computer Networks</option>
-                            <option value="Digital Electronics">Digital Electronics</option>
-                            <option value="Digital Design">Digital Design</option>
-                            <option value="Engineering Mathematics">Engineering Mathematics</option>
-                            <option value="Artificial Intelligence">Artificial Intelligence</option>
-                            <option value="General Academic">General Academic</option>
-                            <option value="Faculty-Only Reserve">Faculty-Only Reserve</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">ISBN Number</label>
-                        <input type="text" id="addBookISBN" placeholder="e.g. 978-0201100884" class="w-full p-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Total Copies *</label>
-                        <input type="number" id="addBookCopies" min="1" max="50" value="5" required class="w-full p-2 border border-slate-300 rounded-lg">
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block font-bold text-slate-700 mb-1">Book Introduction / Summary *</label>
-                        <textarea id="addBookDesc" required rows="2" placeholder="Course syllabus summary or preface description..." class="w-full p-2 border border-slate-300 rounded-lg"></textarea>
-                    </div>
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">Access Tier (Polymorphism)</label>
-                        <select id="addBookFacultyOnly" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
-                            <option value="false">General Access (All Students &amp; Faculty)</option>
-                            <option value="true">⭐ Faculty Reserve Only</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
-                        <button type="submit" class="px-4 py-2 bg-watermelon-600 hover:bg-watermelon-700 text-white font-bold rounded-lg shadow-sm">
-                            Publish Book to Catalogue
+            </section>
+
+            <!-- 5. SECTION: REVIEWS & QA -->
+            <section id="section-discussions" class="hidden space-y-5">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Book Reviews &amp; Star Ratings</h2>
+                            <p class="text-xs text-slate-500">Rate 1-5 stars and read student reviews.</p>
+                        </div>
+                        <button onclick="toggleReviewForm()" class="px-3 py-1.5 rounded-lg bg-watermelon-600 hover:bg-watermelon-700 text-white text-xs font-bold transition">
+                            + Write Review
                         </button>
                     </div>
-                </form>
-            </div>
 
-            <!-- 4.3 Book Availability Sub-View -->
-            <div id="adminView-availability" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3 hidden">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-900">Catalogue Availability &amp; Circulation Stats</h3>
-                        <p class="text-xs text-slate-500">Monitor on-shelf vs issued copy counts across every book.</p>
+                    <form id="writeReviewForm" onsubmit="handleReviewSubmit(event)" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Book</label>
+                                <select id="reviewBookSelect" class="w-full bg-white border border-slate-300 rounded-lg p-2"></select>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Star Rating</label>
+                                <select id="reviewStarRating" class="w-full bg-white border border-slate-300 rounded-lg p-2">
+                                    <option value="5">⭐⭐⭐⭐⭐ (5 Stars)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4 Stars)</option>
+                                    <option value="3">⭐⭐⭐ (3 Stars)</option>
+                                    <option value="2">⭐⭐ (2 Stars)</option>
+                                    <option value="1">⭐ (1 Star)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="text-xs">
+                            <label class="block font-bold text-slate-700 mb-1">Review Headline</label>
+                            <input type="text" id="reviewHeadline" required placeholder="e.g. Masterpiece for algorithmic understanding" class="w-full bg-white border border-slate-300 rounded-lg p-2">
+                        </div>
+                        <div class="text-xs">
+                            <label class="block font-bold text-slate-700 mb-1">Review Comments</label>
+                            <textarea id="reviewBody" required rows="2" placeholder="Write feedback regarding clarity and code quality..." class="w-full bg-white border border-slate-300 rounded-lg p-2"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-2 text-xs">
+                            <button type="button" onclick="toggleReviewForm()" class="px-3 py-1.5 text-slate-600 font-semibold hover:bg-slate-200 rounded-lg">Cancel</button>
+                            <button type="submit" class="px-4 py-1.5 bg-watermelon-600 text-white font-bold rounded-lg hover:bg-watermelon-700">Submit Review</button>
+                        </div>
+                    </form>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="reviewsFeedContainer"></div>
+                </div>
+
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Academic Q&amp;A &amp; Book Discussions</h2>
+                            <p class="text-xs text-slate-500">Ask questions and discuss topics with verified faculty answers.</p>
+                        </div>
+                        <button onclick="toggleDiscussionForm()" class="px-3 py-1.5 rounded-lg bg-rind-600 hover:bg-rind-700 text-white text-xs font-bold transition">
+                            + Ask Question
+                        </button>
+                    </div>
+
+                    <form id="askQuestionForm" onsubmit="handleDiscussionSubmit(event)" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Book</label>
+                                <select id="discussionBookSelect" class="w-full bg-white border border-slate-300 rounded-lg p-2"></select>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">Subject / Question Title</label>
+                                <input type="text" id="discussionTitle" required placeholder="e.g. Dijkstra vs Bellman-Ford negative weights" class="w-full bg-white border border-slate-300 rounded-lg p-2">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Question Details</label>
+                            <textarea id="discussionQuery" required rows="2" placeholder="Explain the concept you need clarification on..." class="w-full bg-white border border-slate-300 rounded-lg p-2"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" onclick="toggleDiscussionForm()" class="px-3 py-1.5 text-slate-600 font-semibold hover:bg-slate-200 rounded-lg">Cancel</button>
+                            <button type="submit" class="px-4 py-1.5 bg-rind-600 text-white font-bold rounded-lg hover:bg-rind-700">Post Question</button>
+                        </div>
+                    </form>
+
+                    <div class="space-y-4" id="discussionsContainer"></div>
+                </div>
+            </section>
+
+            <!-- 6. SECTION: NOTIFICATIONS -->
+            <section id="section-notifications" class="hidden space-y-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Patron Notification Center</h2>
+                            <p class="text-xs text-slate-500">Issue notices, return receipts, due reminders, and fine payment confirmations.</p>
+                        </div>
+                        <button onclick="markAllNotificationsRead()" class="text-xs font-semibold text-watermelon-600 hover:text-watermelon-700">Mark all as read</button>
+                    </div>
+                    <div class="space-y-2.5" id="notificationsListContainer"></div>
+                </div>
+            </section>
+
+            <!-- 7. SECTION: ADMIN CONSOLE -->
+            <section id="section-admin" class="hidden space-y-5">
+                <div class="flex border-b border-slate-200 text-xs font-bold space-x-2">
+                    <button onclick="switchAdminTab('students')" id="adminSubTab-students" class="py-2 px-3 border-b-2 border-watermelon-600 text-watermelon-700">4.1 Student Records</button>
+                    <button onclick="switchAdminTab('books')" id="adminSubTab-books" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.2 Book Management</button>
+                    <button onclick="switchAdminTab('availability')" id="adminSubTab-availability" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.3 Book Availability</button>
+                    <button onclick="switchAdminTab('libraryrecords')" id="adminSubTab-libraryrecords" class="py-2 px-3 text-slate-500 hover:text-slate-800">4.4 Circulation Records</button>
+                </div>
+
+                <div id="adminView-students" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Student &amp; Patron Records</h3>
+                            <p class="text-xs text-slate-500">Inspect borrowing history, active loans, and fine balances.</p>
+                        </div>
+                        <input type="text" id="adminStudentSearch" oninput="renderAdminStudentRecords()" placeholder="Search by name, roll no, or ID..."
+                               class="w-full sm:w-72 px-3 py-1.5 border border-slate-200 rounded-lg text-xs">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                                <tr>
+                                    <th class="p-2.5">User ID</th>
+                                    <th class="p-2.5">Name</th>
+                                    <th class="p-2.5">Department</th>
+                                    <th class="p-2.5">Active Loans</th>
+                                    <th class="p-2.5">Total Borrowed</th>
+                                    <th class="p-2.5">Unpaid Dues</th>
+                                    <th class="p-2.5 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminStudentsTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
-                            <tr>
-                                <th class="p-2.5">ID</th>
-                                <th class="p-2.5">Title</th>
-                                <th class="p-2.5">Subject</th>
-                                <th class="p-2.5">Total Copies</th>
-                                <th class="p-2.5">Available on Shelf</th>
-                                <th class="p-2.5">Currently Issued</th>
-                                <th class="p-2.5">Clearance</th>
-                                <th class="p-2.5 text-right">Delete</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminAvailabilityTableBody" class="divide-y divide-slate-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
-            <!-- 4.4 Library Circulation Records Sub-View -->
-            <div id="adminView-libraryrecords" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3 hidden">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div>
-                        <h3 class="text-sm font-bold text-slate-900">Complete Master Circulation Ledger</h3>
-                        <p class="text-xs text-slate-500">Audit trail of all issued books, returned loans, and overdue items system-wide.</p>
+                <div id="adminView-books" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-4 hidden">
+                    <h3 class="text-sm font-bold text-slate-900">Add New Book to Catalogue</h3>
+                    <form onsubmit="handleAdminAddNewBook(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Book Title *</label>
+                            <input type="text" id="addBookTitle" required placeholder="e.g. Modern Compiler Design" class="w-full p-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Author Name *</label>
+                            <input type="text" id="addBookAuthor" required placeholder="e.g. Dick Grune" class="w-full p-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Author Bio</label>
+                            <input type="text" id="addBookAuthorInfo" placeholder="e.g. Vrije Universiteit Faculty" class="w-full p-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Subject / Category *</label>
+                            <select id="addBookSubject" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
+                                <option value="Core Java">Core Java</option>
+                                <option value="C and C++">C and C++</option>
+                                <option value="Data Structures and Algorithms">Data Structures and Algorithms</option>
+                                <option value="DBMS">DBMS</option>
+                                <option value="Operating Systems">Operating Systems</option>
+                                <option value="Computer Networks">Computer Networks</option>
+                                <option value="Digital Electronics">Digital Electronics</option>
+                                <option value="Digital Design">Digital Design</option>
+                                <option value="Engineering Mathematics">Engineering Mathematics</option>
+                                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                <option value="General Academic">General Academic</option>
+                                <option value="Faculty-Only Reserve">Faculty-Only Reserve</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">ISBN Number</label>
+                            <input type="text" id="addBookISBN" placeholder="978-0387972725" class="w-full p-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Total Copies *</label>
+                            <input type="number" id="addBookCopies" min="1" max="50" value="5" required class="w-full p-2 border border-slate-300 rounded-lg">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label class="block font-bold text-slate-700 mb-1">Book Introduction *</label>
+                            <textarea id="addBookDesc" required rows="2" placeholder="Course preface or synopsis..." class="w-full p-2 border border-slate-300 rounded-lg"></textarea>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">Access Clearance</label>
+                            <select id="addBookFacultyOnly" class="w-full p-2 border border-slate-300 rounded-lg bg-white">
+                                <option value="false">General Access (Students &amp; Faculty)</option>
+                                <option value="true">⭐ Faculty Reserve Only</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-3 flex justify-end">
+                            <button type="submit" class="px-4 py-2 bg-watermelon-600 hover:bg-watermelon-700 text-white font-bold rounded-lg shadow-sm">
+                                Publish Book to Catalogue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="adminView-availability" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3 hidden">
+                    <h3 class="text-sm font-bold text-slate-900">Catalogue Availability &amp; Stock</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                                <tr>
+                                    <th class="p-2.5">ID</th>
+                                    <th class="p-2.5">Title</th>
+                                    <th class="p-2.5">Subject</th>
+                                    <th class="p-2.5">Total Copies</th>
+                                    <th class="p-2.5">Available on Shelf</th>
+                                    <th class="p-2.5">Currently Issued</th>
+                                    <th class="p-2.5">Clearance</th>
+                                    <th class="p-2.5 text-right">Delete</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminAvailabilityTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
                     </div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs">
-                        <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
-                            <tr>
-                                <th class="p-2.5">Loan ID</th>
-                                <th class="p-2.5">Patron</th>
-                                <th class="p-2.5">Book Title</th>
-                                <th class="p-2.5">Issue Date</th>
-                                <th class="p-2.5">Due Date</th>
-                                <th class="p-2.5">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminCirculationTableBody" class="divide-y divide-slate-100">
-                            <!-- Populated dynamically -->
-                        </tbody>
-                    </table>
+
+                <div id="adminView-libraryrecords" class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3 hidden">
+                    <h3 class="text-sm font-bold text-slate-900">Master Circulation Ledger</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-600 uppercase font-semibold">
+                                <tr>
+                                    <th class="p-2.5">Loan ID</th>
+                                    <th class="p-2.5">Patron</th>
+                                    <th class="p-2.5">Book Title</th>
+                                    <th class="p-2.5">Issue Date</th>
+                                    <th class="p-2.5">Due Date</th>
+                                    <th class="p-2.5">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminCirculationTableBody" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-    </main>
+        </main>
+    </div>
 
-    <!-- BOOK DETAILS MODAL (Requirement 2.2) -->
+    <!-- BOOK DETAILS MODAL -->
     <div id="bookDetailsModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+        <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-5">
             <div class="flex items-start justify-between border-b pb-3 border-slate-100">
                 <div class="flex items-center gap-3">
-                    <div id="modalBookBadge" class="w-12 h-14 rounded-lg bg-gradient-to-tr from-watermelon-600 to-rose-700 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                    <div class="w-12 h-14 rounded-lg bg-gradient-to-tr from-watermelon-600 to-rose-700 text-white flex items-center justify-center font-bold text-lg shadow-sm">
                         📖
                     </div>
                     <div>
-                        <span id="modalBookSubject" class="text-[11px] font-bold text-watermelon-600 uppercase">Computer Science</span>
+                        <span id="modalBookSubject" class="text-[11px] font-bold text-watermelon-600 uppercase">Subject</span>
                         <h3 id="modalBookTitle" class="text-base sm:text-lg font-bold text-slate-900 leading-snug">Book Title</h3>
                         <p id="modalBookAuthor" class="text-xs text-slate-600">Author Name</p>
                     </div>
@@ -687,18 +713,15 @@
                 <button onclick="closeBookModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none">&times;</button>
             </div>
 
-            <!-- Modal Content -->
             <div class="space-y-3.5 text-xs">
                 <div>
                     <h4 class="font-bold text-slate-700 uppercase tracking-wider text-[11px] mb-1">Author Information</h4>
-                    <p id="modalBookAuthorInfo" class="text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">Author background information.</p>
+                    <p id="modalBookAuthorInfo" class="text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200"></p>
                 </div>
-
                 <div>
                     <h4 class="font-bold text-slate-700 uppercase tracking-wider text-[11px] mb-1">Book Introduction</h4>
-                    <p id="modalBookIntro" class="text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200">Book preface and introduction description.</p>
+                    <p id="modalBookIntro" class="text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200"></p>
                 </div>
-
                 <div class="grid grid-cols-3 gap-3 text-center">
                     <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                         <div class="text-[10px] uppercase font-bold text-slate-400">Total Copies</div>
@@ -715,7 +738,6 @@
                 </div>
             </div>
 
-            <!-- Modal Action Buttons (Issue, Return, Wishlist) -->
             <div class="flex items-center justify-between pt-3 border-t border-slate-100">
                 <button id="modalWishlistBtn" onclick="toggleModalWishlist()" class="px-3.5 py-2 text-xs font-bold rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5">
                     <span>💖</span> Wishlist
@@ -730,7 +752,7 @@
         </div>
     </div>
 
-    <!-- PAYMENT GATEWAY MODAL (Requirement 2.5) -->
+    <!-- PAYMENT GATEWAY MODAL -->
     <div id="paymentGatewayModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
             <div class="flex items-center justify-between border-b pb-3 border-slate-100">
@@ -774,16 +796,16 @@
                 </div>
             </div>
 
-            <div class="pt-2 flex justify-end gap-2">
-                <button onclick="closePaymentModal()" class="px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
-                <button onclick="processSimulatedPayment()" class="px-4 py-2 text-xs font-bold bg-rind-600 hover:bg-rind-700 text-white rounded-lg shadow-sm">
+            <div class="pt-2 flex justify-end gap-2 text-xs">
+                <button onclick="closePaymentModal()" class="px-3.5 py-2 font-semibold text-slate-600 hover:bg-slate-100 rounded-lg">Cancel</button>
+                <button onclick="processSimulatedPayment()" class="px-4 py-2 font-bold bg-rind-600 hover:bg-rind-700 text-white rounded-lg shadow-sm">
                     Confirm &amp; Pay Now
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- AUTHENTICATION / LOGIN / SIGNUP MODAL (Requirement 1 & 7-8) -->
+    <!-- AUTHENTICATION / LOGIN / SIGNUP MODAL -->
     <div id="authModal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
             <div class="flex items-center justify-between border-b pb-3 border-slate-100">
@@ -794,7 +816,6 @@
                 <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
             </div>
 
-            <!-- Login Form -->
             <div id="authLoginForm" class="space-y-3 text-xs">
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Select Account Type / Role</label>
@@ -809,9 +830,9 @@
                 </div>
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Password</label>
-                    <input type="password" value="demo123" placeholder="Enter password" class="w-full p-2 border border-slate-300 rounded-lg">
+                    <input type="password" value="demo123" class="w-full p-2 border border-slate-300 rounded-lg">
                 </div>
-                <button onclick="executeModalLogin()" class="w-full py-2 bg-watermelon-600 hover:bg-watermelon-700 text-white font-bold rounded-lg shadow-sm">
+                <button onclick="executeModalLogin()" class="w-full py-2 bg-[#1e3d2f] hover:bg-[#142a20] text-white font-bold rounded-lg shadow-sm">
                     Enter Portal
                 </button>
                 <div class="text-center pt-2 border-t border-slate-100">
@@ -820,7 +841,6 @@
                 </div>
             </div>
 
-            <!-- Signup Form (Requirement 7 & 8) -->
             <div id="authSignupForm" class="space-y-3 text-xs hidden">
                 <div>
                     <label class="block font-bold text-slate-700 mb-1">Account Role</label>
@@ -853,18 +873,15 @@
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white py-6 mt-auto">
+    <footer class="border-t border-slate-200/90 bg-white py-6 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500 space-y-1">
             <p><strong>Babasaheb Bhimrao Ambedkar University, Lucknow</strong> &bull; Gautam Buddha Central Library</p>
             <p class="text-[11px] text-slate-400">Java OOP Backend Architecture &bull; Watermelon UI Design System &bull; Encapsulation, Inheritance, Polymorphism &amp; Abstraction</p>
         </div>
     </footer>
 
-    <!-- Comprehensive Client-Side Application Engine (Preloaded with several months of library data) -->
+    <!-- Comprehensive Single-Page Application Logic Script -->
     <script>
-        // --------------------------------------------------------------------
-        // DATA STORE: Operating for several months with full historical records
-        // --------------------------------------------------------------------
         const USERS = {
             student01: {
                 id: 'student01',
@@ -936,60 +953,42 @@
 
         let currentUserId = 'student01';
 
-        // 21 Books spanning all required subjects
+        // 21 Pre-loaded Books
         let books = [
-            // Core Java
-            { id: 101, title: 'Effective Java (3rd Edition)', author: 'Joshua Bloch', authorInfo: 'Former Chief Java Architect at Google.', subject: 'Core Java', isbn: '978-0134685991', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'The definitive handbook for writing robust, maintainable Java code with 90 best-practice items covering generics, enums, annotations, and streams.', color: 'from-amber-600 to-amber-800' },
-            { id: 102, title: 'Java: The Complete Reference (12th Ed)', author: 'Herbert Schildt', authorInfo: 'Prolific computer science author.', subject: 'Core Java', isbn: '978-1260440232', totalCopies: 5, availableCopies: 3, facultyOnly: false, desc: 'Comprehensive reference covering Java language syntax, libraries, multi-threading, concurrency utilities, and the Java module system.', color: 'from-orange-600 to-orange-800' },
-            // C and C++
-            { id: 103, title: 'The C Programming Language (ANSI C)', author: 'Brian W. Kernighan, Dennis M. Ritchie', authorInfo: 'Co-creators of C and Unix at Bell Labs.', subject: 'C and C++', isbn: '978-0131103627', totalCopies: 5, availableCopies: 3, facultyOnly: false, desc: 'Classic manual on C programming by its inventors. Covers memory pointers, pointer arithmetic, structures, low-level I/O, and system calls.', color: 'from-blue-600 to-blue-800' },
-            { id: 104, title: 'The C++ Programming Language (4th Ed)', author: 'Bjarne Stroustrup', authorInfo: 'Creator of the C++ programming language.', subject: 'C and C++', isbn: '978-0321563842', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'Definitive guide to modern C++ standard, generic metaprogramming, move semantics, standard template library (STL), and concurrency.', color: 'from-indigo-600 to-indigo-800' },
-            // Data Structures and Algorithms
-            { id: 105, title: 'Introduction to Algorithms (CLRS 4th Ed)', author: 'Thomas H. Cormen, Charles E. Leiserson, Ronald Rivest, Clifford Stein', authorInfo: 'MIT, Dartmouth and Columbia University computer science faculty.', subject: 'Data Structures and Algorithms', isbn: '978-0262046305', totalCopies: 8, availableCopies: 5, facultyOnly: false, desc: 'The global standard textbook covering algorithmic analysis, divide-and-conquer, dynamic programming, greedy algorithms, and graph theory.', color: 'from-emerald-600 to-emerald-800' },
-            { id: 106, title: 'Data Structures & Algorithm Analysis in C++', author: 'Mark Allen Weiss', authorInfo: 'Professor at Florida International University.', subject: 'Data Structures and Algorithms', isbn: '978-0132847377', totalCopies: 4, availableCopies: 3, facultyOnly: false, desc: 'Practical implementations of search trees, heaps, priority queues, hashing tables, and sorting algorithms in object-oriented C++.', color: 'from-teal-600 to-teal-800' },
-            // DBMS
-            { id: 107, title: 'Database System Concepts (7th Edition)', author: 'Abraham Silberschatz, Henry F. Korth, S. Sudarshan', authorInfo: 'Pioneering database researchers at Bell Labs and IIT Bombay.', subject: 'DBMS', isbn: '978-0078022159', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Foundational textbook on relational algebra, SQL optimization, transactions (ACID), concurrency protocols, and distributed database storage.', color: 'from-cyan-600 to-cyan-800' },
-            { id: 108, title: 'Fundamentals of Database Systems', author: 'Ramez Elmasri, Shamkant B. Navathe', authorInfo: 'University of Texas and Georgia Tech professors.', subject: 'DBMS', isbn: '978-0133970777', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'Rigorous approach to conceptual ER-modeling, B-Tree indexes, relational normalization (1NF through BCNF), and NoSQL architectures.', color: 'from-sky-600 to-sky-800' },
-            // Operating Systems
-            { id: 109, title: 'Operating System Concepts (Silberschatz Dinosaur Book)', author: 'Abraham Silberschatz, Peter B. Galvin, Greg Gagne', authorInfo: 'World-renowned systems and architecture educators.', subject: 'Operating Systems', isbn: '978-1119800361', totalCopies: 7, availableCopies: 5, facultyOnly: false, desc: 'Covers process scheduling, mutex locks, semaphores, deadlock avoidance, paging, segmentation, virtual memory, and security.', color: 'from-purple-600 to-purple-800' },
-            { id: 110, title: 'Modern Operating Systems (4th Edition)', author: 'Andrew S. Tanenbaum, Herbert Bos', authorInfo: 'Creator of MINIX and distributed systems authority.', subject: 'Operating Systems', isbn: '978-0133591620', totalCopies: 4, availableCopies: 3, facultyOnly: false, desc: 'Explores microkernel design, virtualization, hypervisors, security vulnerabilities, and multi-core CPU scheduling.', color: 'from-violet-600 to-violet-800' },
-            // Computer Networks
-            { id: 111, title: 'Computer Networking: A Top-Down Approach', author: 'James F. Kurose, Keith W. Ross', authorInfo: 'UMass Amherst and NYU professors.', subject: 'Computer Networks', isbn: '978-0136681557', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Top-down journey through Application Layer (HTTP/DNS), Transport (TCP/UDP), Network (IP/BGP), and Link Layer protocols.', color: 'from-rose-600 to-rose-800' },
-            { id: 112, title: 'Computer Networks (5th Edition)', author: 'Andrew S. Tanenbaum, David J. Wetherall', authorInfo: 'Vrije Universiteit & University of Washington.', subject: 'Computer Networks', isbn: '978-0132126953', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'In-depth coverage of Ethernet, 802.11 wireless, routing algorithms, congestion control, and network cryptography.', color: 'from-pink-600 to-pink-800' },
-            // Digital Electronics
-            { id: 113, title: 'Digital Electronics: Principles & Integrated Circuits', author: 'Anil K. Maini', authorInfo: 'Defense research scientist and electronics consultant.', subject: 'Digital Electronics', isbn: '978-8126514663', totalCopies: 5, availableCopies: 4, facultyOnly: false, desc: 'Comprehensive guide to Boolean logic reduction, Karnaugh maps, TTL/CMOS logic gates, multiplexers, and flip-flops.', color: 'from-red-600 to-red-800' },
-            // Digital Design
-            { id: 114, title: 'Digital Design: With Verilog HDL', author: 'M. Morris Mano, Michael D. Ciletti', authorInfo: 'Distinguished electrical engineering professors.', subject: 'Digital Design', isbn: '978-0132774208', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Hardware design synthesis, registers, counters, finite state machines (FSM), and Verilog Hardware Description Language coding.', color: 'from-amber-700 to-amber-900' },
-            // Engineering Mathematics
-            { id: 115, title: 'Higher Engineering Mathematics (44th Ed)', author: 'B. S. Grewal', authorInfo: 'Standard university mathematics textbook author.', subject: 'Engineering Mathematics', isbn: '978-8174091955', totalCopies: 10, availableCopies: 7, facultyOnly: false, desc: 'Handbook for calculus, differential equations, Fourier analysis, Laplace transformations, vector calculus, and matrices.', color: 'from-emerald-700 to-emerald-900' },
-            // Artificial Intelligence
-            { id: 116, title: 'Artificial Intelligence: A Modern Approach (4th Ed)', author: 'Stuart Russell, Peter Norvig', authorInfo: 'UC Berkeley Professor & Google Research Director.', subject: 'Artificial Intelligence', isbn: '978-0134610993', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Comprehensive study of rational agent architectures, heuristic search, knowledge graphs, deep neural models, and reinforcement learning.', color: 'from-fuchsia-600 to-fuchsia-800' },
-            // General Academic
-            { id: 117, title: 'To Kill a Mockingbird', author: 'Harper Lee', authorInfo: 'Pulitzer Prize winning novelist.', subject: 'General Academic', isbn: '978-0060935467', totalCopies: 5, availableCopies: 5, facultyOnly: false, desc: 'Classic literary masterpiece analyzing jurisprudence, societal ethics, and human empathy in twentieth-century literature.', color: 'from-stone-600 to-stone-800' },
-            { id: 118, title: 'Atomic Habits', author: 'James Clear', authorInfo: 'Behavioral habit researcher.', subject: 'General Academic', isbn: '978-0735211292', totalCopies: 6, availableCopies: 5, facultyOnly: false, desc: 'Actionable scientific framework for personal discipline, habit stacking, environment design, and continuous marginal gains.', color: 'from-slate-600 to-slate-800' },
-            // Faculty-Only Section (Advanced Reference Books)
-            { id: 119, title: 'Advanced Research Methodology in Higher Education', author: 'Dr. V. K. Rao', authorInfo: 'UGC Research Council Member.', subject: 'Faculty-Only Reserve', isbn: '978-9351341234', totalCopies: 3, availableCopies: 3, facultyOnly: true, desc: '[FACULTY ONLY] Doctoral research design, statistical sampling, ethics in peer review, and academic thesis supervision standards.', color: 'from-yellow-600 to-yellow-800' },
-            { id: 120, title: 'Quantum Computation and Quantum Information', author: 'Michael A. Nielsen, Isaac L. Chuang', authorInfo: 'MIT and Los Alamos National Laboratory.', subject: 'Faculty-Only Reserve', isbn: '978-1107002173', totalCopies: 3, availableCopies: 2, facultyOnly: true, desc: '[FACULTY ONLY] Advanced doctoral research monograph on quantum gates, Shor algorithm, error-correcting codes, and quantum teleportation.', color: 'from-yellow-700 to-yellow-900' },
-            { id: 121, title: 'Microprocessor Architecture with 8085', author: 'Ramesh S. Gaonkar', authorInfo: 'State University of New York faculty authority.', subject: 'Faculty-Only Reserve', isbn: '978-8187972884', totalCopies: 2, availableCopies: 2, facultyOnly: true, desc: '[FACULTY ONLY] Faculty laboratory reference on microprocessor hardware bus timing, memory interfacing, and assembly routines.', color: 'from-yellow-800 to-amber-950' }
+            { id: 101, title: 'Effective Java (3rd Edition)', author: 'Joshua Bloch', authorInfo: 'Former Chief Java Architect at Google.', subject: 'Core Java', isbn: '978-0134685991', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'The definitive handbook for writing robust, maintainable Java code with 90 best-practice items covering generics, enums, annotations, and streams.' },
+            { id: 102, title: 'Java: The Complete Reference (12th Ed)', author: 'Herbert Schildt', authorInfo: 'Prolific computer science author.', subject: 'Core Java', isbn: '978-1260440232', totalCopies: 5, availableCopies: 3, facultyOnly: false, desc: 'Comprehensive reference covering Java language syntax, libraries, multi-threading, concurrency utilities, and the Java module system.' },
+            { id: 103, title: 'The C Programming Language (ANSI C)', author: 'Brian W. Kernighan, Dennis M. Ritchie', authorInfo: 'Co-creators of C and Unix at Bell Labs.', subject: 'C and C++', isbn: '978-0131103627', totalCopies: 5, availableCopies: 3, facultyOnly: false, desc: 'Classic manual on C programming by its inventors. Covers memory pointers, pointer arithmetic, structures, low-level I/O, and system calls.' },
+            { id: 104, title: 'The C++ Programming Language (4th Ed)', author: 'Bjarne Stroustrup', authorInfo: 'Creator of the C++ programming language.', subject: 'C and C++', isbn: '978-0321563842', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'Definitive guide to modern C++ standard, generic metaprogramming, move semantics, standard template library (STL), and concurrency.' },
+            { id: 105, title: 'Introduction to Algorithms (CLRS 4th Ed)', author: 'Thomas H. Cormen, Charles E. Leiserson, Ronald Rivest, Clifford Stein', authorInfo: 'MIT, Dartmouth and Columbia University computer science faculty.', subject: 'Data Structures and Algorithms', isbn: '978-0262046305', totalCopies: 8, availableCopies: 5, facultyOnly: false, desc: 'The global standard textbook covering algorithmic analysis, divide-and-conquer, dynamic programming, greedy algorithms, and graph theory.' },
+            { id: 106, title: 'Data Structures & Algorithm Analysis in C++', author: 'Mark Allen Weiss', authorInfo: 'Professor at Florida International University.', subject: 'Data Structures and Algorithms', isbn: '978-0132847377', totalCopies: 4, availableCopies: 3, facultyOnly: false, desc: 'Practical implementations of search trees, heaps, priority queues, hashing tables, and sorting algorithms in object-oriented C++.' },
+            { id: 107, title: 'Database System Concepts (7th Edition)', author: 'Abraham Silberschatz, Henry F. Korth, S. Sudarshan', authorInfo: 'Pioneering database researchers at Bell Labs and IIT Bombay.', subject: 'DBMS', isbn: '978-0078022159', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Foundational textbook on relational algebra, SQL optimization, transactions (ACID), concurrency protocols, and distributed database storage.' },
+            { id: 108, title: 'Fundamentals of Database Systems', author: 'Ramez Elmasri, Shamkant B. Navathe', authorInfo: 'University of Texas and Georgia Tech professors.', subject: 'DBMS', isbn: '978-0133970777', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'Rigorous approach to conceptual ER-modeling, B-Tree indexes, relational normalization (1NF through BCNF), and NoSQL architectures.' },
+            { id: 109, title: 'Operating System Concepts (Silberschatz Dinosaur Book)', author: 'Abraham Silberschatz, Peter B. Galvin, Greg Gagne', authorInfo: 'World-renowned systems and architecture educators.', subject: 'Operating Systems', isbn: '978-1119800361', totalCopies: 7, availableCopies: 5, facultyOnly: false, desc: 'Covers process scheduling, mutex locks, semaphores, deadlock avoidance, paging, segmentation, virtual memory, and security.' },
+            { id: 110, title: 'Modern Operating Systems (4th Edition)', author: 'Andrew S. Tanenbaum, Herbert Bos', authorInfo: 'Creator of MINIX and distributed systems authority.', subject: 'Operating Systems', isbn: '978-0133591620', totalCopies: 4, availableCopies: 3, facultyOnly: false, desc: 'Explores microkernel design, virtualization, hypervisors, security vulnerabilities, and multi-core CPU scheduling.' },
+            { id: 111, title: 'Computer Networking: A Top-Down Approach', author: 'James F. Kurose, Keith W. Ross', authorInfo: 'UMass Amherst and NYU professors.', subject: 'Computer Networks', isbn: '978-0136681557', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Top-down journey through Application Layer (HTTP/DNS), Transport (TCP/UDP), Network (IP/BGP), and Link Layer protocols.' },
+            { id: 112, title: 'Computer Networks (5th Edition)', author: 'Andrew S. Tanenbaum, David J. Wetherall', authorInfo: 'Vrije Universiteit & University of Washington.', subject: 'Computer Networks', isbn: '978-0132126953', totalCopies: 4, availableCopies: 2, facultyOnly: false, desc: 'In-depth coverage of Ethernet, 802.11 wireless, routing algorithms, congestion control, and network cryptography.' },
+            { id: 113, title: 'Digital Electronics: Principles & Integrated Circuits', author: 'Anil K. Maini', authorInfo: 'Defense research scientist and electronics consultant.', subject: 'Digital Electronics', isbn: '978-8126514663', totalCopies: 5, availableCopies: 4, facultyOnly: false, desc: 'Comprehensive guide to Boolean logic reduction, Karnaugh maps, TTL/CMOS logic gates, multiplexers, and flip-flops.' },
+            { id: 114, title: 'Digital Design: With Verilog HDL', author: 'M. Morris Mano, Michael D. Ciletti', authorInfo: 'Distinguished electrical engineering professors.', subject: 'Digital Design', isbn: '978-0132774208', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Hardware design synthesis, registers, counters, finite state machines (FSM), and Verilog Hardware Description Language coding.' },
+            { id: 115, title: 'Higher Engineering Mathematics (44th Ed)', author: 'B. S. Grewal', authorInfo: 'Standard university mathematics textbook author.', subject: 'Engineering Mathematics', isbn: '978-8174091955', totalCopies: 10, availableCopies: 7, facultyOnly: false, desc: 'Handbook for calculus, differential equations, Fourier analysis, Laplace transformations, vector calculus, and matrices.' },
+            { id: 116, title: 'Artificial Intelligence: A Modern Approach (4th Ed)', author: 'Stuart Russell, Peter Norvig', authorInfo: 'UC Berkeley Professor & Google Research Director.', subject: 'Artificial Intelligence', isbn: '978-0134610993', totalCopies: 6, availableCopies: 4, facultyOnly: false, desc: 'Comprehensive study of rational agent architectures, heuristic search, knowledge graphs, deep neural models, and reinforcement learning.' },
+            { id: 117, title: 'To Kill a Mockingbird', author: 'Harper Lee', authorInfo: 'Pulitzer Prize winning novelist.', subject: 'General Academic', isbn: '978-0060935467', totalCopies: 5, availableCopies: 5, facultyOnly: false, desc: 'Classic literary masterpiece analyzing jurisprudence, societal ethics, and human empathy in twentieth-century literature.' },
+            { id: 118, title: 'Atomic Habits', author: 'James Clear', authorInfo: 'Behavioral habit researcher.', subject: 'General Academic', isbn: '978-0735211292', totalCopies: 6, availableCopies: 5, facultyOnly: false, desc: 'Actionable scientific framework for personal discipline, habit stacking, environment design, and continuous marginal gains.' },
+            { id: 119, title: 'Advanced Research Methodology in Higher Education', author: 'Dr. V. K. Rao', authorInfo: 'UGC Research Council Member.', subject: 'Faculty-Only Reserve', isbn: '978-9351341234', totalCopies: 3, availableCopies: 3, facultyOnly: true, desc: '[FACULTY ONLY] Doctoral research design, statistical sampling, ethics in peer review, and academic thesis supervision standards.' },
+            { id: 120, title: 'Quantum Computation and Quantum Information', author: 'Michael A. Nielsen, Isaac L. Chuang', authorInfo: 'MIT and Los Alamos National Laboratory.', subject: 'Faculty-Only Reserve', isbn: '978-1107002173', totalCopies: 3, availableCopies: 2, facultyOnly: true, desc: '[FACULTY ONLY] Advanced doctoral research monograph on quantum gates, Shor algorithm, error-correcting codes, and quantum teleportation.' },
+            { id: 121, title: 'Microprocessor Architecture with 8085', author: 'Ramesh S. Gaonkar', authorInfo: 'State University of New York faculty authority.', subject: 'Faculty-Only Reserve', isbn: '978-8187972884', totalCopies: 2, availableCopies: 2, facultyOnly: true, desc: '[FACULTY ONLY] Faculty laboratory reference on microprocessor hardware bus timing, memory interfacing, and assembly routines.' }
         ];
 
-        // Months of borrowing records: active and returned
         let loans = [
             { id: 501, userId: 'student01', bookId: 103, bookTitle: 'The C Programming Language (ANSI C)', issueDate: '2026-08-10', dueDate: '2026-08-24', returnDate: '2026-08-22', active: false, condition: 'Returned on time (Good condition)' },
             { id: 502, userId: 'student02', bookId: 107, bookTitle: 'Database System Concepts (7th Edition)', issueDate: '2026-09-01', dueDate: '2026-09-15', returnDate: '2026-09-18', active: false, condition: 'Returned 3 days late (Fine settled)' },
             { id: 503, userId: 'faculty01', bookId: 119, bookTitle: 'Advanced Research Methodology in Higher Education', issueDate: '2026-09-10', dueDate: '2026-10-10', returnDate: '2026-10-05', active: false, condition: 'Returned in pristine condition' },
             { id: 504, userId: 'student01', bookId: 115, bookTitle: 'Higher Engineering Mathematics (44th Ed)', issueDate: '2026-09-20', dueDate: '2026-10-04', returnDate: '2026-10-04', active: false, condition: 'Returned on scheduled date' },
-
-            // Active Loans
             { id: 505, userId: 'student01', bookId: 101, bookTitle: 'Effective Java (3rd Edition)', issueDate: '2026-10-28', dueDate: '2026-11-11', returnDate: null, active: true, condition: 'In Patron Possession' },
             { id: 506, userId: 'student02', bookId: 105, bookTitle: 'Introduction to Algorithms (CLRS 4th Ed)', issueDate: '2026-10-25', dueDate: '2026-11-08', returnDate: null, active: true, condition: 'In Patron Possession' },
             { id: 507, userId: 'faculty01', bookId: 120, bookTitle: 'Quantum Computation and Quantum Information', issueDate: '2026-10-15', dueDate: '2026-11-14', returnDate: null, active: true, condition: '30-Day Faculty Loan' },
-
-            // OVERDUE LOAN (6 days overdue -> generates ₹30 fine)
             { id: 508, userId: 'student01', bookId: 109, bookTitle: 'Operating System Concepts (Silberschatz Dinosaur Book)', issueDate: '2026-10-14', dueDate: '2026-10-28', returnDate: null, active: true, condition: 'OVERDUE by 6 Days' }
         ];
 
-        // Fines (Late return ₹5/day, Damaged ₹200, Lost ₹500)
         let fines = [
             { id: 701, userId: 'student01', bookId: 109, bookTitle: 'Operating System Concepts', type: 'LATE_RETURN', reason: 'Late Return: 6 days overdue past due date (Due: 2026-10-28)', amount: 30, paid: false, paidAt: null, txnId: null },
             { id: 702, userId: 'student01', bookId: 103, bookTitle: 'The C Programming Language (ANSI C)', type: 'DAMAGED_BOOK', reason: 'Damaged Book: Book spine cracked and liquid stains on pages', amount: 200, paid: false, paidAt: null, txnId: null },
@@ -997,14 +996,12 @@
             { id: 704, userId: 'student02', bookId: 107, bookTitle: 'Database System Concepts', type: 'LATE_RETURN', reason: 'Late Return: 3 days overdue past due date', amount: 15, paid: true, paidAt: '2026-09-18', txnId: 'TXN-BBAU-332145' }
         ];
 
-        // Wishlists
         let wishlists = [
-            { userId: 'student01', bookId: 105 }, // CLRS
-            { userId: 'student01', bookId: 116 }, // AI Russell & Norvig
-            { userId: 'faculty01', bookId: 121 }  // Microprocessor
+            { userId: 'student01', bookId: 105 },
+            { userId: 'student01', bookId: 116 },
+            { userId: 'faculty01', bookId: 121 }
         ];
 
-        // Reviews with 1-5 Stars
         let reviews = [
             { id: 801, userId: 'student01', userName: 'Aarav Gupta', bookId: 101, bookTitle: 'Effective Java (3rd Edition)', rating: 5, headline: 'Masterpiece for Java developers', body: 'The advice on builders, immutability, and generics fundamentally changed how I write code.', date: '2026-10-29' },
             { id: 802, userId: 'student02', userName: 'Priya Singh', bookId: 105, bookTitle: 'Introduction to Algorithms (CLRS)', rating: 5, headline: 'Tough but completely unmatched', body: 'Pseudocode is wonderfully detailed. Best book for mastering dynamic programming and graph traversals.', date: '2026-10-26' },
@@ -1012,7 +1009,6 @@
             { id: 804, userId: 'student03', userName: 'Rohan Verma', bookId: 113, bookTitle: 'Digital Electronics: Principles & Integrated Circuits', rating: 5, headline: 'Helped me ace semester exams', body: 'Very clear Karnaugh map simplification examples and logic gate breakdowns.', date: '2026-10-18' }
         ];
 
-        // Discussions & Student/Faculty Q&A
         let discussions = [
             {
                 id: 1001,
@@ -1045,7 +1041,6 @@
             }
         ];
 
-        // Notifications
         let notifications = [
             { id: 901, userId: 'student01', type: 'ISSUE_CONFIRMATION', title: 'Book Issued Successfully', message: "You have checked out 'Effective Java (3rd Edition)'. Due on 2026-11-11.", read: false, time: '6 days ago' },
             { id: 902, userId: 'student01', type: 'DUE_DATE_REMINDER', title: 'Upcoming Due Date Reminder', message: "Your borrowed book 'Operating System Concepts' is due soon. Please return on time to avoid ₹5/day fine.", read: false, time: '7 days ago' },
@@ -1056,43 +1051,45 @@
         ];
 
         // --------------------------------------------------------------------
-        // LOGIC & CONTROLLER METHODS
+        // TRANSITIONS & AUTH
         // --------------------------------------------------------------------
         function getCurrentUser() {
             return USERS[currentUserId] || USERS.student01;
         }
 
-        function switchRole(userId) {
+        function demoLogin(userId) {
             currentUserId = userId;
             const u = getCurrentUser();
 
-            // Update top header texts
-            document.getElementById('headerUserName').innerText = u.name;
-            document.getElementById('headerUserSubtitle').innerText = `${u.roleLabel} (${u.maxBooks} Books / ${u.maxDays} Days)`;
+            // Transition from Welcome screen to Dashboard
+            document.getElementById('view-welcome').classList.add('hidden');
+            document.getElementById('view-dashboard').classList.remove('hidden');
 
-            // Update Role Indicator
-            const badge = document.getElementById('roleBadgeIndicator');
+            // Update Dashboard header texts
+            document.getElementById('dashUserHeading').innerText = u.name;
+            document.getElementById('dashUserSubtitle').innerText = `${u.department || u.roleLabel}`;
+
+            const badge = document.getElementById('dashRoleBadge');
+            const adminNav = document.getElementById('nav-admin');
+
             if (u.role === 'ADMIN') {
-                badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800 border border-purple-300';
-                badge.innerText = 'Administrator Console';
-                document.getElementById('nav-admin').classList.remove('hidden');
+                badge.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-100 text-purple-800 border border-purple-300';
+                badge.innerText = 'Administrator';
+                adminNav.classList.remove('hidden');
+                navigateTab('admin');
             } else if (u.role === 'FACULTY') {
-                badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-rind-100 text-rind-800 border border-rind-300';
-                badge.innerText = 'Faculty Account (Reserve Access)';
-                document.getElementById('nav-admin').classList.add('hidden');
+                badge.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-rind-100 text-rind-800 border border-rind-300';
+                badge.innerText = 'Faculty Member';
+                adminNav.classList.add('hidden');
+                navigateTab('catalog');
             } else {
-                badge.className = 'px-2.5 py-1 rounded-full text-xs font-bold bg-watermelon-50 text-watermelon-700 border border-watermelon-200';
-                badge.innerText = 'Student Account';
-                document.getElementById('nav-admin').classList.add('hidden');
+                badge.className = 'px-2 py-0.5 rounded-full text-[11px] font-bold bg-watermelon-50 text-watermelon-700 border border-watermelon-200';
+                badge.innerText = 'Student';
+                adminNav.classList.add('hidden');
+                navigateTab('catalog');
             }
 
-            // Sync Dropdown
-            document.getElementById('roleSelector').value = userId;
-
-            // Update Bento KPI counters
             updateKPIs();
-
-            // Refresh Active View
             filterCatalogue();
             renderMyBooks();
             renderWishlist();
@@ -1101,7 +1098,15 @@
             renderNotifications();
             if (u.role === 'ADMIN') renderAdminData();
 
-            showToast(`Switched account to ${u.name} (${u.roleLabel}). Policies and access clearances updated!`, 'info');
+            showToast(`Logged in successfully as ${u.name} (${u.roleLabel})!`, 'success');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function logoutToHome() {
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-welcome').classList.remove('hidden');
+            showToast('Logged out. Returned to BBAU Library portal.', 'info');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateKPIs() {
@@ -1128,10 +1133,10 @@
                 const section = document.getElementById('section-' + t);
                 if (navBtn && section) {
                     if (t === tabId) {
-                        navBtn.className = 'nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg bg-watermelon-600 text-white shadow-sm transition flex items-center gap-1.5 shrink-0';
+                        navBtn.className = 'nav-btn px-3 py-1.5 text-xs font-bold rounded-lg bg-watermelon-600 text-white shadow-sm flex items-center gap-1 shrink-0';
                         section.classList.remove('hidden');
                     } else {
-                        navBtn.className = 'nav-btn px-3.5 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 transition flex items-center gap-1.5 shrink-0';
+                        navBtn.className = 'nav-btn px-3 py-1.5 text-xs font-bold rounded-lg text-slate-600 hover:text-slate-900 flex items-center gap-1 shrink-0';
                         section.classList.add('hidden');
                     }
                 }
@@ -1139,7 +1144,7 @@
         }
 
         // --------------------------------------------------------------------
-        // CATALOGUE RENDERING & SEARCH (Requirement 2.1)
+        // CATALOGUE RENDERING
         // --------------------------------------------------------------------
         function quickFilterSubject(sub) {
             document.getElementById('catalogSubjectSelect').value = sub;
@@ -1163,22 +1168,20 @@
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-200">No books found matching your search criteria.</div>`;
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 bg-white rounded-xl border border-slate-200">No books found matching criteria.</div>`;
                 return;
             }
 
             filtered.forEach(b => {
-                // Polymorphic rule: user.canBorrow(book)
                 const isFacultyOnly = b.facultyOnly;
                 const canUserBorrow = user.role === 'ADMIN' || user.role === 'FACULTY' || !isFacultyOnly;
                 const isWishlisted = wishlists.some(w => w.userId === user.id && w.bookId === b.id);
                 const isAvailable = b.availableCopies > 0;
 
                 const card = document.createElement('div');
-                card.className = 'bento-card bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between';
+                card.className = 'bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition';
                 card.innerHTML = `
                     <div>
-                        <!-- Header & Badges -->
                         <div class="flex items-start justify-between gap-2 mb-2.5">
                             <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-700">
                                 ${b.subject}
@@ -1192,7 +1195,6 @@
                                    </span>`}
                         </div>
 
-                        <!-- Book Title & Author -->
                         <h3 class="text-sm font-bold text-slate-900 leading-snug cursor-pointer hover:text-watermelon-600 transition" onclick="openBookModal(${b.id})">
                             ${b.title}
                         </h3>
@@ -1201,22 +1203,20 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-slate-100 space-y-2.5">
-                        <!-- Copies & Stock info -->
                         <div class="flex items-center justify-between text-xs">
-                            <span class="text-slate-500">Available Shelf:</span>
+                            <span class="text-slate-500">Available:</span>
                             <span class="font-bold ${isAvailable ? 'text-rind-600' : 'text-rose-500'}">
                                 ${b.availableCopies} of ${b.totalCopies} Copies
                             </span>
                         </div>
 
-                        <!-- Card Action Buttons -->
                         <div class="flex items-center gap-1.5">
                             <button onclick="openBookModal(${b.id})" class="flex-1 py-1.5 px-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-lg transition text-center">
                                 View Details
                             </button>
 
                             ${!canUserBorrow
-                                ? `<button disabled title="Student accounts are restricted from Faculty Reserve materials" class="py-1.5 px-3 bg-slate-100 text-slate-400 text-xs font-bold rounded-lg cursor-not-allowed">
+                                ? `<button disabled title="Student accounts restricted from Faculty Reserve materials" class="py-1.5 px-3 bg-slate-100 text-slate-400 text-xs font-bold rounded-lg cursor-not-allowed">
                                     Faculty Only
                                    </button>`
                                 : !isAvailable
@@ -1228,7 +1228,7 @@
                                        </button>`
                             }
 
-                            <button onclick="toggleWishlist(${b.id})" title="${isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}" class="p-1.5 border border-slate-200 hover:border-watermelon-300 rounded-lg text-sm transition ${isWishlisted ? 'text-rose-600 bg-rose-50' : 'text-slate-400'}">
+                            <button onclick="toggleWishlist(${b.id})" class="p-1.5 border border-slate-200 hover:border-watermelon-300 rounded-lg text-sm transition ${isWishlisted ? 'text-rose-600 bg-rose-50' : 'text-slate-400'}">
                                 ${isWishlisted ? '❤️' : '🤍'}
                             </button>
                         </div>
@@ -1239,7 +1239,7 @@
         }
 
         // --------------------------------------------------------------------
-        // 2.2 BOOK DETAILS MODAL
+        // MODALS
         // --------------------------------------------------------------------
         let activeModalBookId = null;
         function openBookModal(bookId) {
@@ -1269,11 +1269,9 @@
                 clearanceTag.innerText = 'Open Circulation';
             }
 
-            // Wishlist Button state
             const wBtn = document.getElementById('modalWishlistBtn');
             wBtn.innerHTML = isWishlisted ? '<span>❤️</span> In Wishlist' : '<span>💖</span> Add to Wishlist';
 
-            // Issue Button state
             const issueBtn = document.getElementById('modalIssueBtn');
             if (!canUserBorrow) {
                 issueBtn.disabled = true;
@@ -1310,34 +1308,28 @@
             }
         }
 
-        // --------------------------------------------------------------------
-        // BORROW & RETURN LOGIC (Encapsulation + Polymorphism)
-        // --------------------------------------------------------------------
+        // Borrow & Return
         function borrowBook(bookId) {
             const u = getCurrentUser();
             const b = books.find(x => x.id === bookId);
             if (!b) return;
 
-            // 1. Availability invariant check
             if (b.availableCopies <= 0) {
                 showToast(`Sorry, all copies of "${b.title}" are currently in circulation.`, 'warning');
                 return;
             }
 
-            // 2. Polymorphic Clearance check: user.canBorrow(book)
             if (u.role === 'STUDENT' && b.facultyOnly) {
-                showToast(`Access Restricted: "${b.title}" is reserved for Faculty Members. Student accounts cannot borrow this resource.`, 'error');
+                showToast(`Access Restricted: "${b.title}" is reserved for Faculty Members.`, 'error');
                 return;
             }
 
-            // 3. Quota check
             const activeLoans = loans.filter(l => l.userId === u.id && l.active);
             if (activeLoans.length >= u.maxBooks) {
-                showToast(`Borrow limit reached! ${u.roleLabel} accounts can hold maximum ${u.maxBooks} concurrent loans.`, 'warning');
+                showToast(`Borrow limit reached! Max ${u.maxBooks} concurrent loans allowed.`, 'warning');
                 return;
             }
 
-            // Execute borrow
             b.availableCopies--;
             const newLoanId = 500 + loans.length + 1;
             const today = new Date().toISOString().split('T')[0];
@@ -1355,13 +1347,12 @@
                 condition: 'In Patron Possession'
             });
 
-            // Notification
             notifications.unshift({
                 id: 900 + notifications.length + 1,
                 userId: u.id,
                 type: 'ISSUE_CONFIRMATION',
                 title: 'Book Issued Successfully',
-                message: `You checked out "${b.title}". Scheduled due date is ${dueDate} (${u.maxDays} days period).`,
+                message: `You checked out "${b.title}". Due date is ${dueDate}.`,
                 read: false,
                 time: 'Just now'
             });
@@ -1385,24 +1376,21 @@
                 b.availableCopies++;
             }
 
-            // Notification
             notifications.unshift({
                 id: 900 + notifications.length + 1,
                 userId: u.id,
                 type: 'RETURN_CONFIRMATION',
                 title: 'Book Return Acknowledged',
-                message: `Return recorded for "${l.bookTitle}". Book copy restored to shelf inventory.`,
+                message: `Return recorded for "${l.bookTitle}". Shelf inventory restored.`,
                 read: false,
                 time: 'Just now'
             });
 
-            showToast(`Book "${l.bookTitle}" returned successfully. Inventory updated.`, 'success');
+            showToast(`Book "${l.bookTitle}" returned successfully.`, 'success');
             updateUI();
         }
 
-        // --------------------------------------------------------------------
-        // 2.3 MY BOOKS RENDERING
-        // --------------------------------------------------------------------
+        // My Books
         function toggleMyBooksView(view) {
             const tabActive = document.getElementById('myBooksTabActive');
             const tabHistory = document.getElementById('myBooksTabHistory');
@@ -1447,8 +1435,8 @@
                         <td class="py-3 px-3 font-semibold ${isOverdue ? 'text-rose-600' : 'text-slate-800'}">${l.dueDate}</td>
                         <td class="py-3 px-3">
                             ${isOverdue
-                                ? `<span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 animate-pulse">Overdue (₹5/day)</span>`
-                                : `<span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-rind-100 text-rind-800">Active On Loan</span>`}
+                                ? `<span class="inline-flex px-2 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800">Overdue (₹5/day)</span>`
+                                : `<span class="inline-flex px-2 py-0.5 rounded text-[10px] font-semibold bg-rind-100 text-rind-800">Active</span>`}
                         </td>
                         <td class="py-3 px-3 text-right">
                             <button onclick="returnBook(${l.id})" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-rind-600 hover:bg-rind-700 text-white shadow-sm transition">Return</button>
@@ -1461,7 +1449,7 @@
             const tbodyHist = document.getElementById('returnedHistoryTableBody');
             tbodyHist.innerHTML = '';
             if (historyLoans.length === 0) {
-                tbodyHist.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No previously returned history.</td></tr>`;
+                tbodyHist.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No returned history recorded.</td></tr>`;
             } else {
                 historyLoans.forEach(l => {
                     const tr = document.createElement('tr');
@@ -1478,18 +1466,16 @@
             }
         }
 
-        // --------------------------------------------------------------------
-        // 2.4 WISHLIST LOGIC
-        // --------------------------------------------------------------------
+        // Wishlist
         function toggleWishlist(bookId) {
             const u = getCurrentUser();
             const idx = wishlists.findIndex(w => w.userId === u.id && w.bookId === bookId);
             if (idx >= 0) {
                 wishlists.splice(idx, 1);
-                showToast('Removed from your saved wishlist.', 'info');
+                showToast('Removed from wishlist.', 'info');
             } else {
                 wishlists.push({ userId: u.id, bookId: bookId });
-                showToast('Saved to your wishlist! You can monitor availability anytime.', 'success');
+                showToast('Saved to wishlist!', 'success');
             }
             renderWishlist();
             filterCatalogue();
@@ -1505,7 +1491,7 @@
             grid.innerHTML = '';
 
             if (userWish.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-10 text-center text-slate-400">Your wishlist is currently empty. Click the heart icon on any book in the catalogue to save it.</div>`;
+                grid.innerHTML = `<div class="col-span-full py-10 text-center text-slate-400">Your wishlist is empty.</div>`;
                 return;
             }
 
@@ -1538,9 +1524,7 @@
             });
         }
 
-        // --------------------------------------------------------------------
-        // 2.5 FINE SECTION & SIMULATED PAYMENT GATEWAY
-        // --------------------------------------------------------------------
+        // Fines & Payment Gateway
         let activePaymentFineId = null;
 
         function renderFines() {
@@ -1555,7 +1539,7 @@
             tbody.innerHTML = '';
 
             if (userFines.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">Excellent! You have no fines recorded on your library account.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-400">No fines assessed on your account.</td></tr>`;
                 return;
             }
 
@@ -1612,13 +1596,12 @@
             f.paidAt = new Date().toISOString().split('T')[0];
             f.txnId = txnId;
 
-            // Trigger payment confirmation notification
             notifications.unshift({
                 id: 900 + notifications.length + 1,
                 userId: f.userId,
                 type: 'PAYMENT_CONFIRMATION',
                 title: 'Library Fine Payment Receipt',
-                message: `Payment of ₹${f.amount} confirmed via ${selectedMethod}. Transaction Reference: ${txnId}. Library dues cleared!`,
+                message: `Payment of ₹${f.amount} confirmed via ${selectedMethod}. Reference: ${txnId}. Library dues cleared!`,
                 read: false,
                 time: 'Just now'
             });
@@ -1628,9 +1611,7 @@
             updateUI();
         }
 
-        // --------------------------------------------------------------------
-        // 2.6 REVIEWS AND DISCUSSIONS
-        // --------------------------------------------------------------------
+        // Reviews & Discussions
         function toggleReviewForm() {
             const f = document.getElementById('writeReviewForm');
             f.classList.toggle('hidden');
@@ -1650,10 +1631,8 @@
             dSelect.innerHTML = '';
 
             books.forEach(b => {
-                const opt1 = new Option(b.title, b.id);
-                const opt2 = new Option(b.title, b.id);
-                rSelect.add(opt1);
-                dSelect.add(opt2);
+                rSelect.add(new Option(b.title, b.id));
+                dSelect.add(new Option(b.title, b.id));
             });
         }
 
@@ -1737,7 +1716,6 @@
         }
 
         function renderDiscussions() {
-            // Render Reviews Feed
             const revFeed = document.getElementById('reviewsFeedContainer');
             revFeed.innerHTML = '';
             reviews.forEach(r => {
@@ -1759,7 +1737,6 @@
                 revFeed.appendChild(card);
             });
 
-            // Render Discussions
             const discCont = document.getElementById('discussionsContainer');
             discCont.innerHTML = '';
             discussions.forEach(d => {
@@ -1776,7 +1753,6 @@
                         <div class="text-[11px] text-slate-500 mt-1">Asked by <strong>${d.userName}</strong> (${d.userRole})</div>
                     </div>
 
-                    <!-- Replies Thread -->
                     <div class="pl-3 border-l-2 border-slate-300 space-y-2 mt-2">
                         ${d.replies.map(rep => `
                             <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-xs">
@@ -1790,10 +1766,9 @@
                             </div>
                         `).join('')}
 
-                        <!-- Reply Input Box -->
                         <div class="flex gap-2 pt-1">
-                            <input type="text" id="replyInput-${d.id}" placeholder="Type an academic answer or explanation..."
-                                   class="flex-1 p-2 bg-white border border-slate-300 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-rind-500">
+                            <input type="text" id="replyInput-${d.id}" placeholder="Type an academic answer..."
+                                   class="flex-1 p-2 bg-white border border-slate-300 rounded-lg text-xs focus:ring-1 focus:ring-rind-500">
                             <button onclick="handlePostReply(${d.id})" class="px-3 py-1.5 bg-rind-600 hover:bg-rind-700 text-white font-bold rounded-lg transition">Reply</button>
                         </div>
                     </div>
@@ -1802,9 +1777,7 @@
             });
         }
 
-        // --------------------------------------------------------------------
-        // 2.7 NOTIFICATIONS HUB
-        // --------------------------------------------------------------------
+        // Notifications
         function renderNotifications() {
             const u = getCurrentUser();
             const userNotifs = notifications.filter(n => n.userId === u.id);
@@ -1816,7 +1789,7 @@
             cont.innerHTML = '';
 
             if (userNotifs.length === 0) {
-                cont.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No notifications right now.</div>`;
+                cont.innerHTML = `<div class="py-8 text-center text-slate-400 text-xs">No notifications.</div>`;
                 return;
             }
 
@@ -1866,9 +1839,7 @@
             showToast('All notifications marked as read.', 'info');
         }
 
-        // --------------------------------------------------------------------
-        // ADMIN MANAGEMENT DASHBOARD (Requirement 4.1 - 4.4)
-        // --------------------------------------------------------------------
+        // Admin Console
         function switchAdminTab(subTab) {
             ['students', 'books', 'availability', 'libraryrecords'].forEach(t => {
                 const btn = document.getElementById('adminSubTab-' + t);
@@ -1914,7 +1885,7 @@
                     <td class="p-2.5 text-slate-600">${userTotalLoans} loans total</td>
                     <td class="p-2.5 font-extrabold ${userFines > 0 ? 'text-rose-600' : 'text-rind-600'}">₹${userFines}</td>
                     <td class="p-2.5 text-right">
-                        <button onclick="switchRole('${s.id}')" class="px-2 py-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded">Inspect Account</button>
+                        <button onclick="demoLogin('${s.id}')" class="px-2 py-1 text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded">Inspect</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -1943,15 +1914,14 @@
                 totalCopies: copies,
                 availableCopies: copies,
                 facultyOnly: facultyOnly,
-                desc: desc,
-                color: 'from-slate-700 to-slate-900'
+                desc: desc
             });
 
             document.getElementById('addBookTitle').value = '';
             document.getElementById('addBookAuthor').value = '';
             document.getElementById('addBookDesc').value = '';
 
-            showToast(`New book "${title}" published to catalog repository!`, 'success');
+            showToast(`New book "${title}" published to catalog!`, 'success');
             updateUI();
             switchAdminTab('availability');
         }
@@ -2013,11 +1983,11 @@
             });
         }
 
-        // --------------------------------------------------------------------
-        // AUTH MODAL LOGIC (Requirement 1, 4-8)
-        // --------------------------------------------------------------------
-        function openAuthModal() {
+        // Auth Modal
+        function openAuthModal(mode) {
             document.getElementById('authModal').classList.remove('hidden');
+            if (mode === 'signup') toggleAuthForms(true);
+            else toggleAuthForms(false);
         }
 
         function closeAuthModal() {
@@ -2038,7 +2008,7 @@
 
         function executeModalLogin() {
             const selectedUserId = document.getElementById('loginRoleType').value;
-            switchRole(selectedUserId);
+            demoLogin(selectedUserId);
             closeAuthModal();
         }
 
@@ -2054,11 +2024,10 @@
             }
 
             if (USERS[uid]) {
-                alert('User ID already exists. Please pick another.');
+                alert('User ID already exists. Please choose another.');
                 return;
             }
 
-            // Register new user dynamically
             USERS[uid] = {
                 id: uid,
                 name: name,
@@ -2071,16 +2040,12 @@
                 fineRate: role === 'FACULTY' ? 1.0 : 5.0
             };
 
-            // Add option to role selector
-            const opt = new Option(`${role === 'FACULTY' ? '👨‍🏫' : '🎓'} ${name} (${uid})`, uid);
-            document.getElementById('roleSelector').add(opt);
-
-            switchRole(uid);
             closeAuthModal();
+            demoLogin(uid);
             showToast(`Registration complete! Welcome to BBAU Library, ${name}.`, 'success');
         }
 
-        // Global Toast feedback
+        // Toast
         function showToast(msg, type = 'info') {
             const alertCont = document.getElementById('toastAlert');
             const box = document.getElementById('toastAlertBox');
@@ -2088,7 +2053,7 @@
             const text = document.getElementById('toastText');
 
             text.innerText = msg;
-            box.className = 'rounded-xl p-3.5 border text-xs sm:text-sm font-medium flex items-center justify-between shadow-sm transition-all duration-300';
+            box.className = 'rounded-xl p-3.5 border text-xs sm:text-sm font-medium flex items-center justify-between shadow-xl transition-all duration-300';
 
             if (type === 'success') {
                 box.classList.add('bg-rind-50', 'border-rind-300', 'text-rind-800');
@@ -2100,11 +2065,12 @@
                 box.classList.add('bg-amber-50', 'border-amber-300', 'text-amber-800');
                 icon.innerText = '⚠️';
             } else {
-                box.classList.add('bg-watermelon-50', 'border-watermelon-200', 'text-watermelon-800');
+                box.classList.add('bg-white', 'border-slate-300', 'text-slate-800');
                 icon.innerText = 'ℹ️';
             }
 
             alertCont.classList.remove('hidden');
+            setTimeout(hideToast, 4500);
         }
 
         function hideToast() {
@@ -2121,11 +2087,6 @@
             renderNotifications();
             if (getCurrentUser().role === 'ADMIN') renderAdminData();
         }
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', () => {
-            switchRole('student01');
-        });
     </script>
 </body>
 </html>
