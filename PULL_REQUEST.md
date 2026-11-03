@@ -73,3 +73,4 @@ This Pull Request provides a full rewrite of the Library Management System (LMS)
 - `backend/src/test/java/com/bbau/library/OOPConceptsTest.java` (Automated tests)
 - `frontend/pages/index.html` & `index.html` (Watermelon UI frontend)
 - `server.js` (Lightweight Node server)
+
